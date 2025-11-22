@@ -120,5 +120,4 @@ dist
 raw_corpus_source/
 ingestor/venv/
 __pycache__/
-src/assets/corpus/*.json
-!src/assets/corpus/corpus_manifest.json
+

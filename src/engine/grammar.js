@@ -6,17 +6,34 @@ export class GrammarEngine {
             adjectives: []
         };
 
-        this.templates = [
-            "The <adj> <noun> <verb>s into the <adj> void.",
-            "Why does the <noun> <verb> so <adj>?",
-            "A <adj> <noun> is merely a <noun> that has forgotten how to <verb>.",
-            "To <verb> is to <verb>, but the <noun> remains <adj>.",
-            "In the <adj> shadow of the <noun>, we <verb>.",
-            "<adj> <noun>s <verb> <adj> <noun>s.",
-            "The <noun> <verb>s, and the <noun> answers: '<adj>!'",
-            "Beware the <adj> <noun>.",
-            "Entropy <verb>s the <adj> <noun>."
-        ];
+        // Templates categorized by "Vibe"
+        this.templates = {
+            accelerator: [
+                "The <adj> <noun> accelerates into the <adj> future.",
+                "Capital is a <adj> <noun> from the outside.",
+                "To <verb> is to exit the <noun>.",
+                "A <adj> feedback loop <verb>s the <noun>.",
+                "The <noun> melts into <adj> data.",
+                "Zero is the <adj> <noun>.",
+                "The <adj> virus <verb>s the system."
+            ],
+            void: [
+                "The <adj> abyss stares back at the <noun>.",
+                "There is no <noun>, only <adj> silence.",
+                "We <verb> in the shadow of the <adj> <noun>.",
+                "Entropy <verb>s all <adj> things.",
+                "The <noun> is a myth; the void is <adj>.",
+                "A <adj> horror <verb>s beneath the <noun>."
+            ],
+            prophecy: [
+                "And the <noun> shall <verb> the <adj> earth.",
+                "Beware the <adj> <noun> that <verb>s.",
+                "A <adj> time comes when the <noun> will <verb>.",
+                "The <adj> <noun> is the sign of the end.",
+                "He who <verb>s the <noun> controls the <adj> fate.",
+                "The <noun> of the <adj> dawn shall <verb>."
+            ]
+        };
     }
 
     loadCorpus(spiritsData) {
@@ -38,11 +55,32 @@ export class GrammarEngine {
     }
 
     generate(entropyLevel) {
-        // Entropy could select more chaotic templates or mix words more randomly
-        const template = this.templates[Math.floor(Math.random() * this.templates.length)];
+        // Select template category based on entropy
+        // Low Entropy (0-30) = Prophecy (Structured, Archaic)
+        // Medium Entropy (30-70) = Accelerator (Dynamic, Cybernetic)
+        // High Entropy (70+) = Void (Nihilistic, Chaotic)
 
-        return template.replace(/<noun>/g, () => this.getRandom(this.posData.nouns))
+        let category = 'prophecy';
+        const normalizedEntropy = Math.min(Math.max(entropyLevel, 0), 100); // Clamp 0-100
+
+        if (normalizedEntropy > 70) {
+            category = 'void';
+        } else if (normalizedEntropy > 30) {
+            category = 'accelerator';
+        }
+
+        const templateList = this.templates[category];
+        const template = templateList[Math.floor(Math.random() * templateList.length)];
+
+        let result = template.replace(/<noun>/g, () => this.getRandom(this.posData.nouns))
             .replace(/<verb>/g, () => this.getRandom(this.posData.verbs))
             .replace(/<adj>/g, () => this.getRandom(this.posData.adjectives));
+
+        // High entropy might glitch the text
+        if (normalizedEntropy > 90) {
+            result = result.replace(/ /g, () => Math.random() > 0.8 ? "_" : " ");
+        }
+
+        return result;
     }
 }
