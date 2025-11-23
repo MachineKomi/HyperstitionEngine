@@ -83,7 +83,7 @@ function App() {
     <div className="app-container">
       <header className="header">
         <h1 className="title">HYPERSTITION_ENGINE</h1>
-        <div className="version-display">v0.9.0 (BETA)</div>
+        <div className="version-display">v0.9.1 (BETA)</div>
       </header>
 
       <main>

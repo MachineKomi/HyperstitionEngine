@@ -1,6 +1,8 @@
 # HyperstitionEngine (v0.9.0 BETA)
 
-![Hyperstition Engine Interface](Hyperstition_Engine_v0.9.0_Screenshot01.png)
+![Hyperstition Engine Interface](Hyperstition_Engine_v0.9.0_Screenshot02.png)
+
+![Hyperstition Engine Loading](Hyperstition_Engine_v0.9.0_LoadingScreenshot_02.png)
 
 A cyber-occult interface for generating "hyperstitions" (fictional ideas that make themselves real) using a combination of Markov chains and grammar-based generation, fueled by user-generated entropy.
 

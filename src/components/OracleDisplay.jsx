@@ -104,7 +104,7 @@ const OracleDisplay = ({ onGenerate }) => {
                         {displayText}
                     </p>
                 ) : (
-                    <p className="subtitle">AWAITING_TRANSMISSION...</p>
+                    <p className="subtitle" style={{ textAlign: 'center' }}>AWAITING_TRANSMISSION...</p>
                 )}
             </div>
 
