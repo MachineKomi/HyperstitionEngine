@@ -34,7 +34,7 @@ const OracleDisplay = ({ onGenerate }) => {
                     }
                     return prev + 1; // Reveal 1 char per tick
                 });
-            }, 10); // Fast reveal
+            }, 30); // Slower reveal
 
             return () => clearInterval(interval);
         }
@@ -56,7 +56,8 @@ const OracleDisplay = ({ onGenerate }) => {
         // Part 2: Scrambled tail (deciphering)
         if (revealIndex < generatedText.length) {
             const remaining = generatedText.length - revealIndex;
-            for (let i = 0; i < Math.min(remaining, 10); i++) {
+            const noiseLength = Math.min(remaining, 20); // Longer noise tail
+            for (let i = 0; i < noiseLength; i++) {
                 scrambled += chars[Math.floor(Math.random() * chars.length)];
             }
         }

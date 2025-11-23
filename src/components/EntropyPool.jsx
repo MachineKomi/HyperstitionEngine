@@ -19,19 +19,14 @@ const EntropyPool = () => {
         let myP5;
 
         const sketch = (p) => {
-            let cols, rows;
-            let scl = 20;
             let w, h;
             let particles = [];
-            const numParticles = 800; // Increased count for smoke effect
-            let zOff = 0;
+            const numParticles = 7500; // Increased count significantly (3x)
 
             p.setup = () => {
                 w = containerRef.current.clientWidth;
                 h = 400;
                 p.createCanvas(w, h);
-                cols = p.floor(w / scl);
-                rows = p.floor(h / scl);
 
                 for (let i = 0; i < numParticles; i++) {
                     particles.push(new Particle(p));
@@ -40,32 +35,34 @@ const EntropyPool = () => {
             };
 
             p.draw = () => {
-                // Smoke trail effect: lower alpha background
-                p.background(5, 50);
+                p.background(5, 50); // Higher alpha for less trail, more "dusty"
 
-                // Draw Grid
-                p.stroke(255, 176, 0, 10);
+                // Draw Warp Grid (Subtle background)
+                p.stroke(255, 176, 0, 15);
                 p.strokeWeight(1);
-                for (let x = 0; x <= w; x += scl) {
-                    for (let y = 0; y <= h; y += scl) {
-                        // Warp grid near mouse
+
+                // Grid that deforms with mouse
+                const gridSize = 40;
+                for (let x = 0; x <= w; x += gridSize) {
+                    for (let y = 0; y <= h; y += gridSize) {
+                        let pointX = x;
+                        let pointY = y;
+
+                        // Calculate distance to mouse
                         let d = p.dist(x, y, p.mouseX, p.mouseY);
-                        let warpX = x;
-                        let warpY = y;
-                        if (d < 100) {
+                        if (d < 200) {
                             let angle = p.atan2(y - p.mouseY, x - p.mouseX);
-                            let force = p.map(d, 0, 100, 20, 0);
-                            warpX += p.cos(angle) * force;
-                            warpY += p.sin(angle) * force;
+                            let force = p.map(d, 0, 200, 20, 0); // Warp strength
+                            pointX += p.cos(angle) * force;
+                            pointY += p.sin(angle) * force;
                         }
-                        p.point(warpX, warpY);
+
+                        p.point(pointX, pointY);
                     }
                 }
 
-                zOff += 0.002; // Slower time evolution for smoke
-
+                // Update and Show Particles
                 for (let i = 0; i < particles.length; i++) {
-                    particles[i].follow(cols, rows, scl, zOff);
                     particles[i].update();
                     particles[i].edges(w, h);
                     particles[i].show();
@@ -81,71 +78,68 @@ const EntropyPool = () => {
             p.windowResized = () => {
                 w = containerRef.current.clientWidth;
                 p.resizeCanvas(w, h);
-                cols = p.floor(w / scl);
-                rows = p.floor(h / scl);
             };
 
             class Particle {
                 constructor(p) {
                     this.p = p;
                     this.pos = p.createVector(p.random(w), p.random(h));
-                    this.vel = p.createVector(0, 0);
+                    // Random float velocity (dust)
+                    this.vel = p5.Vector.random2D();
+                    this.vel.mult(p.random(0.2, 0.8));
                     this.acc = p.createVector(0, 0);
-                    this.maxSpeed = 1.5; // Slower smoke
-                    this.prevPos = this.pos.copy();
-                }
-
-                follow(cols, rows, scl, zOff) {
-                    let x = this.p.floor(this.pos.x / scl);
-                    let y = this.p.floor(this.pos.y / scl);
-
-                    // Clamp to grid
-                    x = this.p.constrain(x, 0, cols - 1);
-                    y = this.p.constrain(y, 0, rows - 1);
-
-                    // Simplex noise for smoke
-                    let angle = this.p.noise(x * 0.05, y * 0.05, zOff) * this.p.TWO_PI * 4;
-
-                    // Mouse interaction (Repel/Swirl)
-                    let dx = this.p.mouseX - this.pos.x;
-                    let dy = this.p.mouseY - this.pos.y;
-                    let dSq = dx * dx + dy * dy;
-
-                    if (dSq < 22500) { // 150px radius
-                        let mouseAngle = this.p.atan2(dy, dx);
-                        angle = mouseAngle + this.p.PI + (1 / (dSq * 0.01)); // Swirl
-                    }
-
-                    let forceX = Math.cos(angle);
-                    let forceY = Math.sin(angle);
-
-                    this.acc.add(forceX * 0.1, forceY * 0.1); // Lower force for floaty feel
+                    this.maxSpeed = 3;
                 }
 
                 update() {
+                    // Mouse Interaction: Swirl
+                    let mouseV = this.p.createVector(this.p.mouseX, this.p.mouseY);
+                    let dir = p5.Vector.sub(mouseV, this.pos);
+                    let d = dir.mag();
+
+                    if (d < 150) {
+                        dir.normalize();
+                        // Swirl force (perpendicular to direction)
+                        let swirl = this.p.createVector(-dir.y, dir.x);
+                        swirl.mult(0.5); // Swirl strength
+
+                        // Add some attraction to keep them engaged
+                        dir.mult(0.1);
+
+                        let force = p5.Vector.add(swirl, dir);
+
+                        // Scale by distance
+                        let strength = this.p.map(d, 0, 150, 1, 0);
+                        force.mult(strength);
+
+                        this.acc.add(force);
+                    }
+
+                    // Random Brownian motion
+                    let brownian = p5.Vector.random2D();
+                    brownian.mult(0.05);
+                    this.acc.add(brownian);
+
                     this.vel.add(this.acc);
                     this.vel.limit(this.maxSpeed);
                     this.pos.add(this.vel);
                     this.acc.mult(0);
+
+                    // Damping (friction)
+                    this.vel.mult(0.99);
                 }
 
                 edges(width, height) {
-                    // Wrap around smoothly
-                    if (this.pos.x > width) { this.pos.x = 0; this.updatePrev(); }
-                    if (this.pos.x < 0) { this.pos.x = width; this.updatePrev(); }
-                    if (this.pos.y > height) { this.pos.y = 0; this.updatePrev(); }
-                    if (this.pos.y < 0) { this.pos.y = height; this.updatePrev(); }
-                }
-
-                updatePrev() {
-                    this.prevPos.x = this.pos.x;
-                    this.prevPos.y = this.pos.y;
+                    if (this.pos.x > width) this.pos.x = 0;
+                    if (this.pos.x < 0) this.pos.x = width;
+                    if (this.pos.y > height) this.pos.y = 0;
+                    if (this.pos.y < 0) this.pos.y = height;
                 }
 
                 show() {
-                    this.p.stroke(255, 176, 0, 100); // Lower opacity
-                    this.p.strokeWeight(1); // 1px size
-                    this.p.point(this.pos.x, this.pos.y); // Draw as point for 1px
+                    this.p.stroke(255, 176, 0, 180);
+                    this.p.strokeWeight(1);
+                    this.p.point(this.pos.x, this.pos.y);
                 }
             }
         };
@@ -159,8 +153,8 @@ const EntropyPool = () => {
 
     const handleMouseMove = () => {
         const now = Date.now();
-        if (now - lastUpdateRef.current > 100) {
-            addEntropy(5);
+        if (now - lastUpdateRef.current > 50) { // More frequent updates for smoother feel
+            addEntropy(2);
             lastUpdateRef.current = now;
         }
     };

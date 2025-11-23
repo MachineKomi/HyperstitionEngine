@@ -48,10 +48,17 @@ function App() {
 
       } else {
         setLoadingStatus("FAILED TO LOAD CORPUS. CHECK INGESTOR.");
+        // Allow app to load even if corpus failed, so user can see the error/interface
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
       }
     };
 
-    initCorpus();
+    // Delay initialization slightly to allow LoadingScreen to render first
+    setTimeout(() => {
+      initCorpus();
+    }, 100);
   }, []);
 
   const handleGenerate = async () => {

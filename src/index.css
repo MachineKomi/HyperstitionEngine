@@ -6,39 +6,6 @@
   --color-amber-dim: #b37b00;
   --color-bone: #e0e0e0;
 
-  --font-display: 'Cinzel', serif;
-  --font-mono: 'Roboto Mono', monospace;
-
-  --scanline-color: rgba(255, 176, 0, 0.05);
-}
-
-body {
-  margin: 0;
-  background-color: var(--color-void-dark);
-  color: var(--color-amber-og);
-  font-family: var(--font-mono);
-  overflow-x: hidden;
-  display: flex;
-  justify-content: center;
-  min-height: 100vh;
-}
-
-#root {
-  width: 100%;
-  max-width: 1200px;
-  /* Constrain width */
-  display: flex;
-  box-sizing: border-box;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.title {
-  font-family: var(--font-display);
-  font-size: 4rem;
   color: var(--color-bone);
   text-shadow: 0 0 5px var(--color-amber-dim);
   margin: 0;
@@ -156,73 +123,144 @@ body {
 .output-area {
   margin-top: 2rem;
   text-align: center;
+}
 
-  /* Spirits */
-  .spirits-section {
-    margin-top: 2rem;
-    width: 100%;
+/* Spirits */
+.spirits-section {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.spirit-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.spirit-btn {
+  background: #000;
+  border: 1px solid var(--color-amber-dim);
+  color: var(--color-amber-dim);
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.spirit-btn.selected {
+  border-color: var(--color-amber-og);
+  color: var(--color-amber-og);
+  background: rgba(255, 176, 0, 0.1);
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
   }
 
-  .spirit-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
+  50% {
+    opacity: 1;
   }
 
-  .spirit-btn {
-    background: #000;
-    border: 1px solid var(--color-amber-dim);
-    color: var(--color-amber-dim);
-    padding: 0.5rem;
-    font-size: 0.8rem;
-    cursor: pointer;
+  100% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes glitch-anim {
+  0% {
+    transform: translate(0);
   }
 
-  .spirit-btn.selected {
-    border-color: var(--color-amber-og);
-    color: var(--color-amber-og);
-    background: rgba(255, 176, 0, 0.1);
+  20% {
+    transform: translate(-2px, 2px);
   }
 
-  /* Animations */
-  @keyframes pulse {
-    0% {
-      opacity: 0.5;
-    }
-
-    50% {
-      opacity: 1;
-    }
-
-    100% {
-      opacity: 0.5;
-    }
+  40% {
+    transform: translate(-2px, -2px);
   }
 
-  @keyframes glitch-anim {
-    0% {
-      transform: translate(0);
-    }
-
-    20% {
-      transform: translate(-2px, 2px);
-    }
-
-    40% {
-      transform: translate(-2px, -2px);
-    }
-
-    60% {
-      transform: translate(2px, 2px);
-    }
-
-    80% {
-      transform: translate(2px, -2px);
-    }
-
-    100% {
-      transform: translate(0);
-    }
+  60% {
+    transform: translate(2px, 2px);
   }
+
+  80% {
+    transform: translate(2px, -2px);
+  }
+
+  100% {
+    transform: translate(0);
+  }
+}
+
+/* Loading Screen */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: var(--color-void-dark);
+  color: var(--color-amber-og);
+  font-family: var(--font-mono);
+}
+
+.loading-title {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 10px var(--color-amber-dim);
+}
+
+.loading-log-container {
+  width: 80%;
+  max-width: 600px;
+  height: 200px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--color-amber-dim);
+  padding: 1rem;
+  margin-bottom: 2rem;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-amber-og);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.log-line {
+  margin-bottom: 0.2rem;
+}
+
+.log-prefix {
+  color: var(--color-amber-dim);
+}
+
+.log-cursor {
+  animation: pulse 0.5s infinite;
+}
+
+.loading-bar-container {
+  width: 80%;
+  max-width: 600px;
+  height: 4px;
+  background: var(--color-void-light);
+  border: 1px solid var(--color-amber-dim);
+  margin-bottom: 1rem;
+}
+
+.loading-bar {
+  height: 100%;
+  background: var(--color-amber-og);
+  transition: width 0.2s ease-out;
+  box-shadow: 0 0 10px var(--color-amber-og);
+}
+
+.version-tag {
+  font-size: 0.8rem;
+  color: var(--color-amber-dim);
+  letter-spacing: 2px;
+}
