@@ -1,6 +1,6 @@
 # HyperstitionEngine (v0.9.0 BETA)
 
-![Hyperstition Engine Screenshot](Hyperstition_Engine_v0.0.0_Screenshot01.PNG)
+![Hyperstition Engine Screenshot](Hyperstition_Engine_v0.0.0_Screenshot01.png)
 
 A cyber-occult interface for generating "hyperstitions" (fictional ideas that make themselves real) using a combination of Markov chains and grammar-based generation, fueled by user-generated entropy.
 
@@ -15,6 +15,7 @@ A cyber-occult interface for generating "hyperstitions" (fictional ideas that ma
 
 ## Architecture
 ```mermaid
+graph TD
     subgraph "Ingestion (Python)"
         A[Raw PDFs/TXTs] -->|process_corpus.py| B(Structured JSON Corpus)
     end
