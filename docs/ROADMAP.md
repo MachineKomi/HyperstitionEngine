@@ -35,6 +35,8 @@ The current plan does not include training a foundation model, autonomous networ
 
 ## P0 · The next complete increments
 
+**v0.20 checkpoint:** [geometry and navigation](GEOMETRY.md) add a page-scroll lane, persistent mobile section links, measured source distributions and a tiny recurrent observer. The observer lost to the moving-average baseline on the recorded 36-epoch development stream. Next: evaluate multiple unseen seeds and text-feature ablations; measure rendering and binding on physical phones. Keep the observer separate from generation until predictive value and an explicit literary objective justify a versioned experiment.
+
 ### 0A. Stabilize the automatic encounter
 
 **v0.19 checkpoint:** the [conductor](CONDUCTOR.md) drives source binding and both oracle engines alongside branching, pruning, inheritance and rebirth. Twelve visible gesture states and measured epoch plots address previously idle automatic controls. Next: profile repeated source binding on lower-end phones and evaluate the literary effect of oracle inoculation separately from mechanical coverage.

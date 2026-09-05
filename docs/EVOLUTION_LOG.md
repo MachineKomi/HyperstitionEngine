@@ -90,6 +90,16 @@ This records changes to project practice. It does not record changes to a model'
 
 **Revisit.** Measure ghost-binding cost on real mobile hardware and review whether periodic inoculation improves coherence. More visible mechanisms are not evidence of better writing. The existing project rules already require both measurements, so AGENTS.md needs no new obligation.
 
+## 5 September 2026 · v0.20 · Give the reader an outside
+
+**Observation.** The user could become trapped swiping inside full-width mobile readers. Existing scroll containment and the minimum body width confirmed two concrete mechanisms. A permanent page-scroll lane, boundary chaining and persistent section links now give the reader a way past every panel.
+
+**Experiment and interpretation.** The [geometry chamber](GEOMETRY.md) turns actual neural connections and source statistics into visible form. The existing Land reading suggests a return path; Nietzsche's distinction between origin and later utility suggests inspecting changing functions. A 24-unit reservoir with a learned readout forecasts lexical novelty without steering the engine.
+
+**Contrary evidence.** The reservoir lost to the moving-average baseline on 35 forecasts from the existing 36-epoch recording: MAE 0.121588 versus 0.106419. Keep the experiment inspectable, bounded and uncoupled from generation. No claim of semantic understanding or improved writing follows from the animation.
+
+**Verification and guidance.** Sixty tests pass. Nine browser sizes, real wheel input, emulated touch gestures and scroll chaining verify the mobile fix. Twenty-eight phone rectangle samples spanning three completed epochs remained stable. The existing AGENTS.md rules already require responsive checks, bounded state and measured claims; no new obligation or automatic self-edit is warranted. Next: unseen seeds, feature ablations and physical-phone profiling.
+
 ## Amendment record format
 
 For future entries, record:

@@ -1,0 +1,77 @@
+.section-navigation { display:flex; gap:0; border-bottom:1px solid #514334; background:#12110e; }
+.section-navigation a { flex:1; display:flex; align-items:center; justify-content:center; gap:12px; min-height:48px; color:#dbcfb4; text-decoration:none; font-size:11px; letter-spacing:.08em; border-right:1px solid #393228; }
+.section-navigation a span { color:#a08b6b; font-size:9px; }
+.section-navigation a:hover, .section-navigation a:focus-visible { background:#43331c; color:#ffe2a6; }
+.page-scroll-lane { display:none; }
+#automatic, #geometry, #sprawl, #flow, #manual-console { scroll-margin-top:12px; }
+.geometry-chamber { margin:24px 3.4vw 36px; border:1px solid #66513a; background:#11100e; min-width:0; }
+.geometry-chamber > header { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:24px; border-bottom:1px solid #514334; }
+.geometry-chamber h2 { font:italic 32px/1.15 Georgia,serif; color:#ebcd96; margin:8px 0; }
+.geometry-badge { font-size:10px; color:#c0abd5; line-height:1.8; }
+.geometry-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); }
+.reservoir-panel { padding:24px; border-right:1px solid #514334; min-width:0; background:radial-gradient(circle at 50% 40%,#3b29281f,transparent 70%); }
+.geometry-caption { display:flex; justify-content:space-between; gap:12px; color:#d9c6a2; font-size:10px; line-height:1.6; }
+.geometry-caption span { color:#af9ac0; text-align:right; }
+.reservoir-map { display:block; width:100%; max-width:440px; aspect-ratio:1; margin:12px auto; }
+.geometry-ring { stroke:#675137; stroke-width:.7; fill:none; stroke-dasharray:2 5; }
+.reservoir-map text, .forecast-plot text { fill:#b6a88e; font:8px monospace; }
+.reservoir-map .reservoir-symbol { font:38px Georgia,serif; fill:#f1bd71; }
+.neuron-selector { display:block; color:#d0bea0; font-size:11px; }
+.neuron-selector input { width:100%; min-height:44px; margin:0; accent-color:#efbb66; cursor:pointer; }
+.neuron-values { display:flex; justify-content:space-between; gap:12px; color:#b09abd; font-size:9px; }
+.neuron-values b { display:block; margin-top:6px; font-size:22px; color:#e3ca9f; font-weight:400; font-variant-numeric:tabular-nums; }
+.geometry-note { color:#b8ae9c; font:12px/1.7 monospace; margin:14px 0 0; }
+.geometry-instruments { min-width:0; }
+.forecast-panel, .source-measures { padding:24px; }
+.forecast-panel { border-bottom:1px solid #514334; }
+.forecast-number { font:52px/1.2 Georgia,serif; font-variant-numeric:tabular-nums; color:#f1bd71; margin:16px 0; }
+.forecast-number span { font:11px monospace; color:#b8ae9c; display:block; margin-top:5px; }
+.forecast-plot { width:100%; height:120px; display:block; }
+.plot-key { display:flex; flex-wrap:wrap; gap:16px; font-size:10px; color:#f1bd71; }
+.plot-key span:nth-child(2) { color:#e9e4d3; }
+.plot-key span:nth-child(3) { color:#b998ef; }
+.geometry-errors { display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:9px; color:#b8ae9c; padding-top:12px; }
+.geometry-errors b { display:block; font-size:24px; color:#dfccb0; margin-top:4px; font-weight:400; font-variant-numeric:tabular-nums; }
+.source-probabilities { display:flex; height:42px; margin:16px 0; gap:3px; overflow:hidden; }
+.source-probabilities > div { min-width:0; background:#bd8d43; border-top:3px solid #f1bd71; overflow:hidden; position:relative; }
+.source-probabilities > div:nth-child(even) { background:#6d507d; border-color:#b998ef; }
+.source-probabilities > div span { display:block; padding:8px 4px; color:#fff1d7; font-size:8px; white-space:nowrap; }
+.geometry-statistics { margin:0; }
+.geometry-statistics > div { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 0; border-bottom:1px solid #302a23; }
+.geometry-statistics dt { color:#d9c6a2; font-size:12px; }
+.geometry-statistics dt small { display:block; margin-top:5px; font-size:10px; color:#a99a83; }
+.geometry-statistics dd { margin:0; color:#f1bd71; font-size:24px; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.geometry-statistics dd small { font-size:10px; }
+.geometry-method { border-top:1px solid #514334; padding:0 24px; color:#b8ae9c; font:12px/1.8 monospace; }
+.geometry-method summary { padding:16px 0; cursor:pointer; color:#e3ca9f; min-height:48px; }
+.geometry-method a { color:#e3ca9f; }
+@media (max-width:900px) {
+  .geometry-grid { grid-template-columns:minmax(0,1fr); }
+  .reservoir-panel { border-right:0; border-bottom:1px solid #514334; }
+  .geometry-chamber > header { align-items:flex-start; flex-direction:column; }
+}
+@media (max-width:700px) {
+  body { min-width:0; }
+  /* This sibling is never inside a reader. Native gestures always reach the page. */
+  .page-scroll-lane { display:flex; position:fixed; z-index:30; right:0; top:88px; bottom:calc(58px + env(safe-area-inset-bottom)); width:32px; width:calc(32px + env(safe-area-inset-right)); align-items:center; justify-content:center; touch-action:pan-y; background:repeating-linear-gradient(to bottom,#927442 0 1px,transparent 1px 18px) right 8px top / 5px 18px repeat-y,#14120f; border-left:1px solid #4b3a24; }
+  .page-scroll-lane span { writing-mode:vertical-rl; color:#c1a777; letter-spacing:.16em; font:9px monospace; background:#14120f; padding:14px 4px; pointer-events:none; }
+  .app-container { padding-left:10px; padding-right:calc(42px + env(safe-area-inset-right)); padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
+  .section-navigation { position:fixed; z-index:40; left:0; right:0; bottom:0; padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); border-top:1px solid #927442; }
+  .section-navigation a { min-width:0; min-height:58px; flex-direction:column; gap:5px; font-size:9px; letter-spacing:0; }
+  .section-navigation a span { font-size:9px; }
+  .geometry-chamber { margin:18px 0; }
+  .geometry-chamber > header, .reservoir-panel, .forecast-panel, .source-measures { padding:16px; }
+  .geometry-chamber h2 { font-size:28px; }
+  .geometry-badge { font-size:9px; }
+  .geometry-caption { font-size:9px; }
+  .geometry-method { padding:0 16px; }
+  .geometry-statistics dd { font-size:21px; }
+  .geometry-statistics dt { font-size:11px; }
+  .geometry-note { font-size:11px; }
+  .conductor-console { margin-left:0; margin-right:0; }
+  /* Allow natural chaining when an inner reader reaches its boundary. */
+  .app-container :is(.specimen-text,.source-context,.automatic-trace,.automatic-summary,.chronicle-list,.log-window,.memory-reading,.oracle-monitor,.actuation-log,.conductor-action,.fragment-trace,.lineage-tag,.flow-status,.conductor-ledger > div) { overscroll-behavior:auto; }
+}
+@media (max-width:360px) {
+  .brand-mark b { display:none; }
+}

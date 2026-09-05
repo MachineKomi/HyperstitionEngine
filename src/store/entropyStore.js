@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { clampClockRate } from "../engine/clock.js";
+import { createObserver, observeEpoch } from "../engine/observer.js";
 const useEntropyStore = create((set) => ({
   entropyLevel: 0,
   maxEntropy: 1000,
@@ -21,6 +22,7 @@ const useEntropyStore = create((set) => ({
   machineAction: null,
   machineActions: [],
   machineEpochs: [],
+  machineObserver: createObserver(137),
   automaticOracle: "",
   automaticOracleProgress: "",
   setMachineAction: (action) =>
@@ -46,6 +48,7 @@ const useEntropyStore = create((set) => ({
     }),
   recordMachineEpoch: (entry) =>
     set((state) => ({
+      machineObserver: observeEpoch(state.machineObserver, entry),
       machineEpochs: [
         ...state.machineEpochs,
         {
@@ -63,13 +66,14 @@ const useEntropyStore = create((set) => ({
       ].slice(-96),
     })),
   clearMachineHistory: () =>
-    set({
+    set((state) => ({
+      machineObserver: createObserver(state.automaticSeed),
       machineAction: null,
       machineActions: [],
       machineEpochs: [],
       automaticOracle: "",
       automaticOracleProgress: "",
-    }),
+    })),
   setClockRate: (rate) => set({ clockRate: clampClockRate(rate) }),
   toggleClock: () => set((state) => ({ clockPaused: !state.clockPaused })),
   setAutomaticPhase: (automaticPhase, automaticGeneration) =>

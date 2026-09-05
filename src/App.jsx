@@ -10,6 +10,8 @@ import { SprawlEngine } from "./engine/sprawl";
 import SprawlChamber from "./components/SprawlChamber";
 import AutomaticMode, { ModeSwitch } from "./components/AutomaticMode";
 import ConductorConsole from "./components/ConductorConsole";
+import GeometryChamber from "./components/GeometryChamber";
+import SectionNavigation from "./components/SectionNavigation";
 
 const names = {
   N_Land: "Nick Land",
@@ -200,6 +202,7 @@ export default function App() {
           ENTER THE FLOW <span>↗</span>
         </a>
       </nav>
+      <SectionNavigation />
       <header className="hero">
         <div>
           <p className="eyebrow">NO. 002 — THE CATHEDRAL HAS NO OUTSIDE</p>
@@ -214,7 +217,7 @@ export default function App() {
           </p>
         </div>
         <div className="hero-note">
-          <span className="status-dot" /> SELF-RETURNING ORACLE / v0.19
+          <span className="status-dot" /> SELF-RETURNING ORACLE / v0.20
           <br />
           <p>
             The output becomes the input.
@@ -253,6 +256,7 @@ export default function App() {
       <main id="engine">
         <AutomaticMode />
         <ConductorConsole names={names} />
+        <GeometryChamber />
         <SprawlChamber
           engines={engines}
           ready={ready}

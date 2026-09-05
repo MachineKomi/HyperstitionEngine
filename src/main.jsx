@@ -7,6 +7,7 @@ import './evidence.css'
 import './continuity.css'
 import './memory.css'
 import './conductor.css'
+import './geometry.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
