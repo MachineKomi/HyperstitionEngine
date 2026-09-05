@@ -1,4 +1,4 @@
-# Hyperstition Engine — The Automatic Cathedral (v0.13)
+# Hyperstition Engine — The Automatic Cathedral (v0.14)
 
 A browser-local cyber-occult writing instrument. It starts exploring by itself: a random seed and five simple rules grow branching fiction, select an heir, and feed the result back into the next generation. A visible **AUTO / MANUAL** switch lets you take control at any moment. No LLM or remote inference is involved in generation.
 
@@ -9,6 +9,10 @@ Open the site and wait for the corpus to bind. Automatic mode supplies its own e
 Each automatic tree has at most 85 nodes. The engine retains 12 recent decisions, 200 session transmissions, and 108 completed epochs in the browser-local chronicle. Hidden tabs pause; returning retries any unfinished epoch without advancing its seed. Switching to Manual stops automatic work and keeps the visible fragments available for inspection. Restarting a seed starts a fresh path while preserving the chronicle.
 
 Replay requires the same seed, corpus version, and source selection/order. Wall-clock times and record IDs vary; decisions and generated fragments reproduce. The ordinary manual Markov and grammar rituals are not seeded replays.
+
+The **CLOCK SPEED** dial spans **0.25×–32×**. At the default **1×**, the circuit charges for 0.8 seconds, reveals each generation for 1.5 seconds, then holds its chosen heir for eight seconds: roughly 12–15 seconds per epoch, plus computation. Change the dial with a pointer or arrow keys; SLOW, HUMAN and OVERDRIVE are quick presets. **PAUSE CLOCK** retains the unfinished beat. Changing speed or holding the clock never changes the seeded decisions. Restarting a seed releases pause and retains the selected speed.
+
+Select a graph node or choose **PIN TO READ** to hold a specimen while growth continues. **FOLLOW LIVE** returns to the moving lineage; CANONIZE preserves the inspected fragment with its original epoch and source trace. The map reserves node positions before growth, and reading panels hold their size as content changes. The chronicle initially mounts 12 fossils; **EXHUME 12 OLDER EPOCHS** reveals more without reducing export or retention. Automatic mode presents the archive directly; switch to Manual for replay and possession controls.
 
 ## Run
 

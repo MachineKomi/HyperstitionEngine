@@ -16,6 +16,20 @@ This records changes to project practice. It does not record changes to a model'
 
 **Revisit trigger.** Reassess the composition guidance after a fixed-seed comparison of the current fragment rules and clause-preserving candidates. Reassess optional encoder adoption after a measured quality improvement and device cost report. A striking isolated output can start that experiment; it cannot conclude it.
 
+## 2026-09-05 · A stable frame for a changing lineage
+
+**Request and evidence.** The user asked for a slower adjustable clock and no jumping panels. Inspection found that the radial map recalculated existing radii from the deepest currently populated generation. The inspector also changed height with fragment length, and selection followed every arriving layer.
+
+**Interpretation and experiment.** The second [reading pass](research/LAND_READING_2026-09-05.md#second-pass-cuts-clocks-and-persistence) translates temporal cuts and persistence into a variable clock, fixed graph slots and a pinned reading surface. Literary interpretation informs the experiment; the user request authorizes the change.
+
+**Guidance changed.** AGENTS.md now requires reserving graph positions and reading-panel dimensions and preserving a pin's text, scroll position and provenance. Playback rate remains separate from seeded decisions. The chronicle mounts 12 initial records while retaining up to 108 for browsing/export.
+
+**Evidence and limits.** Regression tests check identical heirs across playback durations, elapsed time during rate changes, pause/resume without catch-up, canceled subscriptions and stable node coordinates through growth/pruning. Browser checks cover 320–1920px and landscape. Twenty desktop samples spanning live epochs had identical map, specimen, observatory, flow and reading-note rectangles; a pinned specimen retained both text and its 24px scroll offset. This is sampled layout verification, not proof of zero shifts under every font, device or interaction. No semantic model or measured literary-quality improvement is claimed.
+
+**Mobile follow-up.** Twenty additional samples at 390px also held all measured panel rectangles steady during unpinned overdrive. The default heir remained unchanged through a seven-second observation within its reading beat. Pinning epoch 11, continuing growth and canonizing preserved epoch 11 provenance. Archive browsing expanded from 12 to 24 mounted fossils; reduced-motion styling disabled node animation.
+
+**Revisit.** Reassess the default clock after reader feedback, and the fixed panel heights with larger text settings. Keep explicit expansion and viewport resizing possible; the rule concerns unwanted changes during automatic growth.
+
 ## Amendment record format
 
 For future entries, record:

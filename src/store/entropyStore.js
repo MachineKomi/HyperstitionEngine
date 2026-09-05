@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { clampClockRate } from "../engine/clock.js";
 const useEntropyStore = create((set) => ({
   entropyLevel: 0,
   maxEntropy: 1000,
@@ -13,6 +14,14 @@ const useEntropyStore = create((set) => ({
   automaticRevision: 0,
   automaticStatus: "loading",
   automaticError: "",
+  clockRate: 1,
+  clockPaused: false,
+  automaticPhase: "charge",
+  automaticGeneration: 0,
+  setClockRate: (rate) => set({ clockRate: clampClockRate(rate) }),
+  toggleClock: () => set((state) => ({ clockPaused: !state.clockPaused })),
+  setAutomaticPhase: (automaticPhase, automaticGeneration) =>
+    set({ automaticPhase, automaticGeneration }),
   setAutomaticMode: (automaticMode) =>
     set((state) =>
       state.automaticMode === automaticMode
@@ -32,6 +41,7 @@ const useEntropyStore = create((set) => ({
       automaticMode: true,
       automaticStatus: "loading",
       automaticError: "",
+      clockPaused: false,
     })),
   signCog: () =>
     set((state) => ({

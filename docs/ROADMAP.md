@@ -142,6 +142,6 @@ Profundity and unease are editorial judgments. Evaluate whether a reader can art
 
 ## Dependency order and next action
 
-Release the automatic, responsive instrument and verify its hosted Vercel build. Then implement **0B source addresses and clause preparation**, with **0D performance measurement** in parallel. That unlocks **0C composition**, then the optional retrieval experiment and motif memory. Multi-lineage experiments come after one lineage can sustain a readable thought.
+The automatic instrument is deployed on Vercel. The v0.14 clockwork increment adds adjustable pacing, a stable map, pinned reading and bounded initial archive rendering. Next implement **0B source addresses and clause preparation**, accompanied by **0D performance measurement**. That unlocks **0C composition**, then the optional retrieval experiment and motif memory. Multi-lineage experiments come after one lineage can sustain a readable thought.
 
 Unresolved implementation questions have concrete owners: engineering chooses the source-record format and measures browser costs; source curation resolves ambiguous attribution and distribution metadata; design reviews cadence and the quality rubric. None requires pretending that the whole future is specified. The immediate work is fully actionable.

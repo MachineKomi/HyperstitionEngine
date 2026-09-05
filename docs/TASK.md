@@ -81,3 +81,12 @@ The v0.9 items below are historical. Current direction and acceptance criteria l
 - [x] Add Vercel build configuration; deployment status is recorded in the release handoff.
 - [ ] Implement source-span addressing and clause preservation (roadmap 0B/0C).
 - [ ] Benchmark optional local semantic retrieval (roadmap 1A).
+
+## Clockwork v0.14
+- [x] Add a live logarithmic clock, 0.25×–32×, with a slower human default and pause/resume.
+- [x] Keep pacing independent of seeded decisions; clean up held timers and subscriptions.
+- [x] Reserve graph slots and panel heights to prevent automatic layout jumps.
+- [x] Pin specimens with original provenance while the live tree continues.
+- [x] Mount 12 fossils initially and expose older batches without losing retained records.
+- [x] Add mechanical clock/bezel details and honor reduced motion.
+- [x] Verify timing, replay, cancellation, growth/pruning geometry and responsive interactions.

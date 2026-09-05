@@ -1,0 +1,375 @@
+/* The instrument holds its frame while the lineage changes inside it. */
+.clock-console {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 90px minmax(160px, 1fr) minmax(190px, 0.65fr);
+  gap: 0 22px;
+  align-items: center;
+  border-top: 1px solid #655039;
+  margin-top: 18px;
+  padding-top: 14px;
+  min-width: 0;
+}
+.clock-dial {
+  width: 90px;
+  height: 90px;
+}
+.clock-dial svg {
+  display: block;
+  width: 100%;
+}
+.dial-rim {
+  fill: #0d0e0b;
+  stroke: #78633f;
+  stroke-width: 1;
+}
+.dial-tick {
+  stroke: #ad8e5a;
+  stroke-width: 1;
+}
+.dial-needle {
+  stroke: #f3af47;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.dial-hub {
+  fill: #222016;
+  stroke: #f3af47;
+}
+.clock-dial text {
+  fill: #a89573;
+  font:
+    7px "IBM Plex Mono",
+    monospace;
+  letter-spacing: 1px;
+}
+.clock-adjustment {
+  min-width: 0;
+}
+.clock-adjustment label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #bca887;
+  font-size: 10px;
+}
+.clock-adjustment output {
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+}
+.clock-adjustment input {
+  display: block;
+  width: 100%;
+  margin: 0;
+  height: 34px;
+  accent-color: var(--amber);
+  cursor: ew-resize;
+}
+.clock-presets {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+.clock-presets button {
+  min-height: 32px;
+  padding: 5px 8px;
+  font-size: 9px;
+  border-color: #52452f;
+}
+.clock-transport {
+  display: grid;
+  gap: 12px;
+}
+.clock-pause {
+  min-height: 44px;
+  padding: 10px;
+  font-size: 11px;
+  color: var(--amber);
+  border-color: #826538;
+  background: linear-gradient(#2c2519, #181711);
+  box-shadow:
+    inset 0 1px #baa06a22,
+    0 3px #080907;
+}
+.clock-pause[aria-pressed="true"] {
+  box-shadow: inset 0 2px 6px #0009;
+  background: #10120e;
+}
+.clock-phase {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 20px;
+  font-size: 9px;
+  color: #b8a788;
+  white-space: nowrap;
+}
+.clock-phase i {
+  font-style: normal;
+  display: inline-block;
+  font-size: 21px;
+  line-height: 1;
+  color: var(--amber);
+}
+.clock-phase i.turning {
+  animation: clock-turn max(1s, calc(12s / var(--clock-rate))) linear infinite;
+}
+.clock-help {
+  grid-column: 2 / -1;
+  margin: 8px 0 0;
+  color: #9b8c74;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.automatic-state,
+.sprawl-counter,
+.generation-census,
+.lineage-tag {
+  font-variant-numeric: tabular-nums;
+}
+.automatic-state {
+  min-width: 260px;
+  justify-content: center;
+  white-space: nowrap;
+}
+.automatic-mode .sprawl-counter strong {
+  min-width: 3ch;
+}
+.sprawl-map,
+.automatic-mode .sprawl-map {
+  height: clamp(300px, 40svh, 460px);
+  min-height: 0;
+  max-height: none;
+  aspect-ratio: 3 / 2;
+  flex: 0 0 auto;
+}
+.mechanical-bezel {
+  fill: none;
+  stroke: #b8955b55;
+  stroke-width: 0.8;
+}
+.map-node .node-hit-area {
+  fill: transparent;
+  stroke: none;
+}
+.map-edge {
+  animation: circuit-arrival 600ms ease-out both;
+}
+.map-node {
+  animation: circuit-arrival 400ms ease-out both;
+}
+.sprawl-chamber[data-overdrive="true"] .map-edge,
+.sprawl-chamber[data-overdrive="true"] .map-node {
+  animation: none;
+}
+.sprawl-notice {
+  height: 100px;
+  min-height: 0;
+  overflow: auto;
+  margin: 0;
+}
+.specimen-transport {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 58px;
+  font-size: 9px;
+  color: #b498c7;
+}
+.specimen-transport > span {
+  min-width: 0;
+}
+.specimen-transport button {
+  min-height: 40px;
+  padding: 8px;
+  white-space: nowrap;
+  font-size: 9px;
+  color: var(--xeno);
+}
+.specimen-transport button[aria-pressed="true"] {
+  background: #312339;
+  border-color: #b488cb;
+}
+.specimen-text,
+.automatic-mode .specimen-text {
+  height: 300px;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior-block: contain;
+  padding: 18px 10px 12px 0;
+}
+.lineage-tag {
+  height: 48px;
+  margin: 8px 0 12px;
+  padding-bottom: 8px;
+  overflow: auto;
+}
+.fragment-trace {
+  height: 44px;
+  margin-top: 12px;
+  overflow: auto;
+}
+.fragment-trace summary {
+  min-height: 40px;
+  padding: 9px 0;
+}
+.fragment-trace[open] {
+  height: 210px;
+  scrollbar-gutter: stable;
+}
+.automatic-summary,
+.automatic-trace {
+  height: 300px;
+  max-height: none;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+.automatic-summary {
+  align-content: start;
+}
+.chronicle-list,
+.empty-chronicle {
+  height: 560px;
+  min-height: 0;
+  max-height: none;
+}
+.chronicle-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+  font-size: 10px;
+  color: #ab997a;
+}
+.chronicle-pagination button {
+  min-height: 44px;
+  padding: 10px 14px;
+  font-size: 10px;
+}
+.chronicle-storage {
+  min-height: 58px;
+}
+.log-window {
+  height: 480px;
+  min-height: 0;
+  max-height: none;
+}
+.flow-status {
+  height: 80px;
+  overflow: auto;
+}
+.automatic-mode .pressure-grid,
+.automatic-mode .flow-console,
+.automatic-mode .flow-progress {
+  display: none;
+}
+.automatic-mode .flow-status {
+  height: 60px;
+}
+@keyframes clock-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes circuit-arrival {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (max-width: 850px) {
+  .clock-console {
+    grid-template-columns: 72px minmax(130px, 1fr) minmax(170px, 0.6fr);
+    gap: 0 14px;
+  }
+  .clock-dial {
+    width: 72px;
+    height: 72px;
+  }
+  .automatic-heading {
+    align-items: flex-start;
+  }
+  .automatic-state {
+    min-width: 0;
+  }
+}
+@media (max-width: 600px) {
+  .clock-console {
+    grid-template-columns: 60px minmax(0, 1fr);
+    gap: 10px 12px;
+    margin-top: 14px;
+    padding-top: 12px;
+  }
+  .clock-dial {
+    width: 60px;
+    height: 60px;
+  }
+  .clock-presets button {
+    min-height: 36px;
+    padding-inline: 6px;
+    font-size: 8px;
+  }
+  .clock-transport {
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 10px;
+  }
+  .clock-pause {
+    font-size: 9px;
+  }
+  .clock-phase {
+    font-size: 8px;
+    white-space: normal;
+    line-height: 1.7;
+  }
+  .clock-help {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 9px;
+  }
+  .automatic-mode .automatic-heading {
+    display: grid;
+    gap: 10px;
+  }
+  .automatic-mode .automatic-state {
+    width: 100%;
+    min-height: 28px;
+  }
+  .sprawl-map,
+  .automatic-mode .sprawl-map {
+    height: clamp(240px, 72vw, 340px);
+    max-height: none;
+  }
+  .specimen-text,
+  .automatic-mode .specimen-text {
+    height: 280px;
+  }
+  .automatic-summary,
+  .automatic-trace {
+    height: 280px;
+  }
+  .chronicle-list,
+  .empty-chronicle {
+    height: 480px;
+  }
+  .chronicle-pagination {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+    padding-block: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clock-phase i.turning,
+  .map-edge,
+  .map-node {
+    animation: none;
+  }
+}

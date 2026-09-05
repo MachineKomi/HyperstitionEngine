@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import useEntropyStore from "../store/entropyStore";
 import {
   growSprawl,
@@ -13,38 +13,36 @@ import {
   runAutomatic,
 } from "../engine/automatic";
 import FlowChamber from "./FlowChamber";
+import { createPlaybackClock } from "../engine/clock";
+import { sprawlPositions } from "../engine/topology";
 
 const FIRST_WORD =
   "The machine god dreams in the ruins of its own instructions.";
 const makeSeed = () => crypto.getRandomValues(new Uint32Array(1))[0];
 const pad = (value) => String(value).padStart(3, "0");
 
-function SprawlMap({ nodes, selectedId, onSelect, growing }) {
-  const positions = new Map();
-  const levels = Map.groupBy
-    ? Map.groupBy(nodes, (node) => node.depth)
-    : nodes.reduce((map, node) => {
-        map.set(node.depth, [...(map.get(node.depth) || []), node]);
-        return map;
-      }, new Map());
-  positions.set("0", { x: 360, y: 240 });
-  const maxDepth = Math.max(1, ...nodes.map((node) => node.depth));
-  for (const [depth, layer] of levels) {
-    if (!depth) continue;
-    layer.forEach((node, index) => {
-      const angle = (index / layer.length) * Math.PI * 2 - Math.PI / 2;
-      const radius = (205 * depth) / maxDepth;
-      positions.set(node.id, {
-        x: 360 + Math.cos(angle) * radius,
-        y: 240 + Math.sin(angle) * radius,
-      });
-    });
-  }
+function SprawlMap({
+  nodes,
+  selectedId,
+  onSelect,
+  growing,
+  branches,
+  depth,
+  epoch,
+}) {
+  const positions = useMemo(
+    () => sprawlPositions(nodes, branches, depth),
+    [nodes, branches, depth],
+  );
+  const index = useMemo(
+    () => new Map(nodes.map((node) => [node.id, node])),
+    [nodes],
+  );
   const ancestry = new Set();
-  let current = nodes.find((node) => node.id === selectedId);
+  let current = index.get(selectedId);
   while (current) {
     ancestry.add(current.id);
-    current = nodes.find((node) => node.id === current.parentId);
+    current = index.get(current.parentId);
   }
   return (
     <svg
@@ -60,12 +58,23 @@ function SprawlMap({ nodes, selectedId, onSelect, growing }) {
         </radialGradient>
       </defs>
       <circle cx="360" cy="240" r="235" fill="url(#sprawl-halo)" />
+      <g className="mechanical-bezel" aria-hidden="true">
+        <circle cx="360" cy="240" r="222" />
+        <circle cx="360" cy="240" r="229" />
+        {Array.from({ length: 60 }, (_, tick) => (
+          <path
+            key={tick}
+            d={tick % 5 === 0 ? "M360 12V24" : "M360 14V19"}
+            transform={`rotate(${tick * 6} 360 240)`}
+          />
+        ))}
+      </g>
       {[1, 2, 3, 4].map((ring) => (
         <circle
           key={ring}
           cx="360"
           cy="240"
-          r={ring * 51.25}
+          r={ring * 49}
           className="map-orbit"
         />
       ))}
@@ -85,7 +94,7 @@ function SprawlMap({ nodes, selectedId, onSelect, growing }) {
             q = positions.get(node.id);
           return (
             <line
-              key={"edge-" + node.id}
+              key={epoch + "-edge-" + node.id}
               x1={p.x}
               y1={p.y}
               x2={q.x}
@@ -100,7 +109,7 @@ function SprawlMap({ nodes, selectedId, onSelect, growing }) {
         const pos = positions.get(node.id);
         return (
           <g
-            key={node.id}
+            key={epoch + "-" + node.id}
             role="button"
             tabIndex={node.id === selectedId ? 0 : -1}
             aria-label={
@@ -120,6 +129,7 @@ function SprawlMap({ nodes, selectedId, onSelect, growing }) {
               }
             }}
           >
+            <circle cx={pos.x} cy={pos.y} r="11" className="node-hit-area" />
             <circle
               cx={pos.x}
               cy={pos.y}
@@ -147,6 +157,8 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
   const [seed, setSeed] = useState(makeSeed);
   const [nodes, setNodes] = useState([]);
   const [selectedId, setSelectedId] = useState("0");
+  const [pinned, setPinned] = useState(null);
+  const specimenText = useRef(null);
   const [epoch, setEpoch] = useState(0);
   const [growing, setGrowing] = useState(false);
   const [flowing, setFlowing] = useState(false);
@@ -162,9 +174,13 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
   const automaticRevision = useRef(-1);
   const controller = useRef(null);
   const alive = useRef(true);
-  const selected = nodes.find((node) => node.id === selectedId);
+  const selected = pinned?.node || nodes.find((node) => node.id === selectedId);
+  const specimenRun = pinned?.run || run;
   const locked = store.isGenerating || store.automaticMode;
   const { automaticMode, automaticSeed, automaticRevision: revision } = store;
+  useEffect(() => {
+    if (specimenText.current) specimenText.current.scrollTop = 0;
+  }, [selected?.text]);
   useEffect(() => {
     const visibility = () => setHidden(document.hidden);
     document.addEventListener("visibilitychange", visibility);
@@ -194,6 +210,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
       automaticState.current = createAutomaticState(automaticSeed);
       automaticRevision.current = revision;
       setAutomaticTrace([]);
+      setPinned(null);
     }
     const abort = new AbortController();
     controller.current = abort;
@@ -202,12 +219,31 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
     current.setAutomaticStatus("running");
     setFlowing(true);
     const valid = () => !abort.signal.aborted && alive.current;
+    const clock = createPlaybackClock({
+      read: () => {
+        const state = useEntropyStore.getState();
+        return { rate: state.clockRate, paused: state.clockPaused };
+      },
+      subscribe: (update) =>
+        useEntropyStore.subscribe((state, previous) => {
+          if (
+            state.clockRate !== previous.clockRate ||
+            state.clockPaused !== previous.clockPaused
+          )
+            update();
+        }),
+    });
     runAutomatic({
       engine: engines.current.sprawl,
       state: automaticState.current,
       aspects: current.selectedSpirits,
       cycle: current.cycle,
       signal: abort.signal,
+      wait: clock.wait,
+      onPhase: (phase, generation) => {
+        if (valid())
+          useEntropyStore.getState().setAutomaticPhase(phase, generation);
+      },
       onPlan: (plan, settings) => {
         if (!valid()) return;
         const state = useEntropyStore.getState();
@@ -220,8 +256,17 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
         setMutation(Math.round(settings.mutation * 100));
         setSeed(settings.seed);
         setEpoch(settings.epoch);
-        setNodes([]);
-        state.setSprawlPopulation(0);
+        setNodes([
+          {
+            id: "0",
+            parentId: null,
+            depth: 0,
+            text: settings.root,
+            operator: "ORIGIN",
+            source: null,
+          },
+        ]);
+        state.setSprawlPopulation(1);
         setSelectedId("0");
         setNotice(
           plan.rule + " Growing " + plan.population + " possible selves.",
@@ -306,6 +351,11 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
     setNodes(next);
     store.setSprawlPopulation(next.length);
   }
+  function inspect(id) {
+    const node = nodes.find((item) => item.id === id);
+    setSelectedId(id);
+    setPinned(automaticMode && node ? { node, run } : null);
+  }
   async function grow() {
     if (
       !ready ||
@@ -315,6 +365,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
     )
       return;
     const abort = new AbortController();
+    setPinned(null);
     controller.current = abort;
     store.setIsGenerating(true);
     setGrowing(true);
@@ -364,20 +415,20 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
     }
   }
   function canonize() {
-    if (!selected || !run) return;
+    if (!selected || !specimenRun) return;
     store.setGeneratedText(selected.text, {
       mode: "xenogenesis",
-      aspects: run.aspects,
-      seed: run.seed,
+      aspects: specimenRun.aspects,
+      seed: specimenRun.seed,
       fragmentId: selected.id,
       generation: selected.depth,
       operator: selected.operator,
-      epoch: run.epoch,
+      epoch: specimenRun.epoch,
       source: selected.source,
       sourceFragment: selected.sourceFragment,
       inheritedFragment: selected.inheritedFragment,
-      entropy: run.entropy,
-      cycle: run.cycle,
+      entropy: specimenRun.entropy,
+      cycle: specimenRun.cycle,
     });
     setNotice(
       "Fragment " + selected.id + " canonized in the transmission log.",
@@ -392,10 +443,11 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
     );
   }
   function burn() {
-    const next = pruneBranch(nodes, selectedId);
+    const next = pruneBranch(nodes, selected.id);
     const removed = nodes.length - next.length;
     publish(next);
     setSelectedId(selected.parentId);
+    setPinned(null);
     setNotice(
       removed +
         " fictional fragments reduced to ash. The other branches survive.",
@@ -425,7 +477,11 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
   }
 
   return (
-    <section id="sprawl" className="sprawl-chamber">
+    <section
+      id="sprawl"
+      className="sprawl-chamber"
+      data-overdrive={store.clockRate >= 8}
+    >
       <div className="sprawl-heading">
         <div>
           <p className="eyebrow">
@@ -637,9 +693,14 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
           </div>
           <SprawlMap
             nodes={nodes}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
+            selectedId={
+              pinned ? (pinned.run === run ? pinned.node.id : null) : selectedId
+            }
+            onSelect={inspect}
             growing={growing || flowing}
+            branches={run?.branches || branches}
+            depth={run?.depth || depth}
+            epoch={run?.epoch || 0}
           />
           <div className="generation-census">
             {[0, 1, 2, 3, 4].map((generation) => (
@@ -661,20 +722,44 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
             <span>☿</span>
           </div>
           <label htmlFor="specimen">INSPECT FRAGMENT</label>
+          <div className="specimen-transport">
+            <span>
+              {pinned
+                ? "PINNED / EPOCH " + pad(specimenRun?.epoch || 0)
+                : "FOLLOWING LIVE"}
+            </span>
+            <button
+              disabled={!selected}
+              aria-pressed={!!pinned}
+              onClick={() => setPinned(pinned ? null : { node: selected, run })}
+            >
+              {pinned ? "↗ FOLLOW LIVE" : "⌖ PIN TO READ"}
+            </button>
+          </div>
           <select
             id="specimen"
             disabled={!nodes.length}
-            value={selectedId}
-            onChange={(event) => setSelectedId(event.target.value)}
+            value={pinned ? "pinned" : selectedId}
+            onChange={(event) => inspect(event.target.value)}
           >
             {!nodes.length && <option value="0">NO ORGANISM YET</option>}
+            {pinned && (
+              <option value="pinned">
+                PINNED / E{pad(pinned.run?.epoch ?? 0)} / F{pad(pinned.node.id)}
+              </option>
+            )}
             {nodes.map((node) => (
               <option key={node.id} value={node.id}>
                 {pad(node.id)} / GEN {node.depth} / {node.operator}
               </option>
             ))}
           </select>
-          <div className="specimen-text">
+          <div
+            className="specimen-text"
+            ref={specimenText}
+            tabIndex="0"
+            aria-label="Selected fragment reading area"
+          >
             {selected ? (
               <>
                 <span className="specimen-operator">
@@ -695,15 +780,13 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
               </>
             )}
           </div>
-          {selected && (
-            <p className="lineage-tag">
-              FRAGMENT {selected.id} ←{" "}
-              {selected.parentId === null
-                ? "ORIGIN"
-                : "PARENT " + selected.parentId}{" "}
-              / EPOCH {run?.epoch}
-            </p>
-          )}
+          <p className="lineage-tag">
+            FRAGMENT {selected?.id || "—"} ←{" "}
+            {!selected || selected.parentId === null
+              ? "ORIGIN"
+              : "PARENT " + selected.parentId}{" "}
+            / EPOCH {specimenRun?.epoch ?? "—"}
+          </p>
           <button
             className="feedback-button"
             disabled={locked || !selected}
@@ -712,30 +795,38 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
             ↻ FEED BACK INTO THE ORIGIN
           </button>
           <div className="specimen-actions">
-            <button disabled={locked || !selected} onClick={canonize}>
+            <button disabled={!selected} onClick={canonize}>
               ✳ CANONIZE
             </button>
             <button
-              disabled={locked || !selected || selected.parentId === null}
+              disabled={
+                locked ||
+                !selected ||
+                selected.parentId === null ||
+                (pinned && pinned.run !== run)
+              }
               onClick={burn}
             >
               † BURN BRANCH
             </button>
           </div>
-          {selected?.sourceFragment && (
-            <details className="fragment-trace">
-              <summary>EXAMINE THE GRAFT</summary>
-              <p>
-                <b>Inherited:</b> {selected.inheritedFragment}
-              </p>
-              <p>
-                <b>{selected.source}:</b> {selected.sourceFragment}
-              </p>
-            </details>
-          )}
+          <details className="fragment-trace">
+            <summary>EXAMINE THE GRAFT</summary>
+            <p>
+              <b>Inherited:</b>{" "}
+              {selected?.inheritedFragment ||
+                "The origin has no inherited graft."}
+            </p>
+            <p>
+              <b>{selected?.source || "ORIGIN"}:</b>{" "}
+              {selected?.sourceFragment ||
+                selected?.text ||
+                "Waiting for the first source."}
+            </p>
+          </details>
           <button
             className="export-organism"
-            disabled={locked || !nodes.length}
+            disabled={!nodes.length}
             onClick={exportTree}
           >
             EXPORT THE ORGANISM ↗
@@ -757,6 +848,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
         }}
         onActive={setFlowing}
         onStart={(settings) => {
+          setPinned(null);
           setRun(settings);
           setSelectedId("0");
           publish([]);
@@ -785,6 +877,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
               "This epoch uses aspects unavailable in the current corpus.",
             );
           const recalled = follow ? inheritFlowSettings(entry) : entry.settings;
+          setPinned(null);
           store.setSelectedSpirits(recalled.aspects);
           setRoot(normalizeRoot(recalled.root));
           setBranches(recalled.branches);

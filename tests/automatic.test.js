@@ -29,6 +29,7 @@ function fixture(seed = 137) {
     state: createAutomaticState(seed),
     aspects: ["N_Land"],
     pauseMs: 0,
+    chargeMs: 0,
     layerPauseMs: 0,
     maxEpochs: 7,
   };
@@ -73,6 +74,28 @@ test("a full automatic lineage reproduces from seed and remains a valid chronicl
     time: "2026-09-05T21:00:00.000Z",
   }));
   assert.deepEqual(validateChronicle(chronicleDocument(records)), records);
+});
+
+test("different playback durations preserve every decision and generated heir", async () => {
+  const first = [],
+    second = [],
+    beats = [],
+    phases = [];
+  await runAutomatic({ ...fixture(), onEpoch: (entry) => first.push(entry) });
+  await runAutomatic({
+    ...fixture(),
+    chargeMs: 800,
+    layerPauseMs: 1500,
+    pauseMs: 8000,
+    wait: async (duration) => {
+      beats.push(duration);
+    },
+    onPhase: (phase) => phases.push(phase),
+    onEpoch: (entry) => second.push(entry),
+  });
+  assert.deepEqual(second, first);
+  assert.deepEqual([...new Set(beats)], [800, 1500, 8000]);
+  assert.equal(phases.filter((phase) => phase === "read").length, 7);
 });
 
 test("interrupting a growing tree publishes no heir and resuming retries the same epoch", async () => {

@@ -1,3 +1,4 @@
+import { waitForPulse } from "./clock.js";
 // Original procedural writing rules: source fragments are recombined, never LLM-generated.
 export function randomStream(seed) {
   let state = seed >>> 0;
@@ -123,6 +124,7 @@ export async function growSprawl({
   signal,
   onLayer = () => {},
   layerPauseMs = 100,
+  wait = waitForPulse,
 }) {
   if (
     ![2, 3, 4].includes(branches) ||
@@ -164,19 +166,7 @@ export async function growSprawl({
     frontier = next;
     onLayer([...nodes]);
     // Yield between generations so STOP and rendering can run.
-    await new Promise((resolve, reject) => {
-      const stop = () => {
-        clearTimeout(timer);
-        signal?.removeEventListener("abort", stop);
-        reject(new DOMException("Sprawl interrupted.", "AbortError"));
-      };
-      const timer = setTimeout(() => {
-        signal?.removeEventListener("abort", stop);
-        resolve();
-      }, layerPauseMs);
-      if (signal?.aborted) stop();
-      else signal?.addEventListener("abort", stop, { once: true });
-    });
+    await wait(layerPauseMs, signal);
   }
   if (signal?.aborted)
     throw new DOMException("Sprawl interrupted.", "AbortError");

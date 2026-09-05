@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import useEntropyStore from "../store/entropyStore";
+import ClockConsole from "./ClockConsole";
 
 export function ModeSwitch() {
   const mode = useEntropyStore((state) => state.automaticMode);
@@ -29,9 +30,14 @@ export default function AutomaticMode() {
     automaticError,
     restartAutomatic,
     isGenerating,
+    clockPaused,
   } = useEntropyStore();
   const [draft, setDraft] = useState(String(automaticSeed));
-  const state = !automaticMode ? "manual" : automaticStatus;
+  const state = !automaticMode
+    ? "manual"
+    : automaticStatus === "running" && clockPaused
+      ? "held"
+      : automaticStatus;
   return (
     <section
       className="automatic-panel"
@@ -46,15 +52,17 @@ export default function AutomaticMode() {
           </h2>
         </div>
         <span className="automatic-state" data-state={state} role="status">
-          {state === "running"
-            ? "◉ AUTO EXPLORING"
-            : state === "paused"
-              ? "◌ PAUSED / TAB HIDDEN"
-              : state === "error"
-                ? "■ AUTO STOPPED"
-                : state === "manual"
-                  ? "◎ MANUAL CONTROL"
-                  : "◌ PREPARING THE FIRST EPOCH"}
+          {state === "held"
+            ? "Ⅱ CLOCK HELD"
+            : state === "running"
+              ? "◉ AUTO EXPLORING"
+              : state === "paused"
+                ? "◌ PAUSED / TAB HIDDEN"
+                : state === "error"
+                  ? "■ AUTO STOPPED"
+                  : state === "manual"
+                    ? "◎ MANUAL CONTROL"
+                    : "◌ PREPARING THE FIRST EPOCH"}
         </span>
       </div>
       <p className="automatic-description">
@@ -95,6 +103,7 @@ export default function AutomaticMode() {
         </button>
         <a href="#sprawl">WATCH IT UNFOLD ↓</a>
       </form>
+      <ClockConsole />
       {automaticError && (
         <p className="error-banner" role="alert">
           {automaticError} Restart from a seed or switch to Manual.

@@ -86,8 +86,11 @@ export async function runAutomatic({
   onPlan = () => {},
   onLayer = () => {},
   onEpoch = () => {},
-  pauseMs = 2800,
-  layerPauseMs = 450,
+  onPhase = () => {},
+  pauseMs = 8000,
+  layerPauseMs = 1500,
+  chargeMs = 800,
+  wait = waitForPulse,
   maxEpochs = Infinity,
 }) {
   let current = state;
@@ -103,12 +106,18 @@ export async function runAutomatic({
     const { pressure, rule, population, ...settings } = plan;
     const run = { ...settings, aspects: [...aspects], cycle };
     onPlan(plan, run);
+    onPhase("charge", 0);
+    await wait(chargeMs, signal);
     const nodes = await growSprawl({
       ...run,
       engine,
       signal,
-      onLayer,
+      onLayer: (layer) => {
+        onPhase("grow", layer.at(-1).depth);
+        onLayer(layer);
+      },
       layerPauseMs,
+      wait,
     });
     if (signal?.aborted)
       throw new DOMException("Automatic mode paused.", "AbortError");
@@ -116,7 +125,8 @@ export async function runAutomatic({
     const entry = { settings: run, pressure, population, champion };
     current = advanceAutomaticState(current, entry);
     onEpoch(entry, nodes, current, rule);
-    if (count < maxEpochs - 1) await waitForPulse(pauseMs, signal);
+    onPhase("read", run.depth);
+    if (count < maxEpochs - 1) await wait(pauseMs, signal);
   }
   return current;
 }

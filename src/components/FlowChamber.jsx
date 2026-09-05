@@ -72,6 +72,7 @@ export default function FlowChamber({
   );
   const [dirty, setDirty] = useState(false);
   const [expanded, setExpanded] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(12);
   const fileInput = useRef(null);
   const alive = useRef(true);
   const ownController = useRef(null);
@@ -262,7 +263,11 @@ export default function FlowChamber({
         <div className="flow-beacon">
           <span>{active ? "◉" : "◎"}</span>
           <small>
-            {active ? "POSSESSION IN PROGRESS" : "AWAITING POSSESSION"}
+            {store.automaticMode
+              ? "AUTOMATIC CHRONICLE"
+              : active
+                ? "POSSESSION IN PROGRESS"
+                : "AWAITING POSSESSION"}
           </small>
         </div>
       </div>
@@ -388,64 +393,84 @@ export default function FlowChamber({
         </div>
       ) : (
         <div className="chronicle-list">
-          {[...entries].reverse().map((entry) => (
-            <article className="epoch-fossil" key={entry.id}>
-              <div className="fossil-index">
-                <span>EPOCH</span>
-                <strong>{String(entry.settings.epoch).padStart(3, "0")}</strong>
-                <small>{entry.pressure.toUpperCase()}</small>
-              </div>
-              <div className="fossil-body">
-                <div className="fossil-meta">
-                  <span>
-                    {entry.champion.operator} / {entry.champion.source}
-                  </span>
-                  <span>
-                    {entry.population} FRAGMENTS ·{" "}
-                    {percent(entry.champion.novelty)} NOVEL WORDS
-                  </span>
-                  <time dateTime={entry.time}>
-                    {new Date(entry.time).toLocaleTimeString()}
-                  </time>
+          {entries
+            .slice(-visibleCount)
+            .reverse()
+            .map((entry) => (
+              <article className="epoch-fossil" key={entry.id}>
+                <div className="fossil-index">
+                  <span>EPOCH</span>
+                  <strong>
+                    {String(entry.settings.epoch).padStart(3, "0")}
+                  </strong>
+                  <small>{entry.pressure.toUpperCase()}</small>
                 </div>
-                <p>{entry.champion.text}</p>
-                <button
-                  className="fossil-detail-toggle"
-                  aria-expanded={expanded === entry.id}
-                  onClick={() =>
-                    setExpanded(expanded === entry.id ? null : entry.id)
-                  }
-                >
-                  {expanded === entry.id ? "− CLOSE" : "+ TRACE THE ANCESTOR"}
-                </button>
-                {expanded === entry.id && (
-                  <div className="fossil-detail">
-                    <p>
-                      <b>ORIGIN</b> {entry.settings.root}
-                    </p>
+                <div className="fossil-body">
+                  <div className="fossil-meta">
                     <span>
-                      SEED {entry.settings.seed} / {entry.settings.branches}{" "}
-                      BRANCHES / {entry.settings.depth} GENERATIONS /{" "}
-                      {percent(entry.settings.mutation)} FOREIGN MATTER
+                      {entry.champion.operator} / {entry.champion.source}
                     </span>
-                    <p>
-                      <b>ASPECTS</b> {entry.settings.aspects.join(" + ")}
-                    </p>
+                    <span>
+                      {entry.population} FRAGMENTS ·{" "}
+                      {percent(entry.champion.novelty)} NOVEL WORDS
+                    </span>
+                    <time dateTime={entry.time}>
+                      {new Date(entry.time).toLocaleTimeString()}
+                    </time>
                   </div>
-                )}
-              </div>
-              <div className="fossil-actions">
-                <button disabled={locked} onClick={() => recall(entry, true)}>
-                  FOLLOW HEIR ↗
-                </button>
-                <button disabled={locked} onClick={() => recall(entry, false)}>
-                  REPLAY EPOCH ↻
-                </button>
-              </div>
-            </article>
-          ))}
+                  <p>{entry.champion.text}</p>
+                  <button
+                    className="fossil-detail-toggle"
+                    aria-expanded={expanded === entry.id}
+                    onClick={() =>
+                      setExpanded(expanded === entry.id ? null : entry.id)
+                    }
+                  >
+                    {expanded === entry.id ? "− CLOSE" : "+ TRACE THE ANCESTOR"}
+                  </button>
+                  {expanded === entry.id && (
+                    <div className="fossil-detail">
+                      <p>
+                        <b>ORIGIN</b> {entry.settings.root}
+                      </p>
+                      <span>
+                        SEED {entry.settings.seed} / {entry.settings.branches}{" "}
+                        BRANCHES / {entry.settings.depth} GENERATIONS /{" "}
+                        {percent(entry.settings.mutation)} FOREIGN MATTER
+                      </span>
+                      <p>
+                        <b>ASPECTS</b> {entry.settings.aspects.join(" + ")}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <div className="fossil-actions">
+                  <button disabled={locked} onClick={() => recall(entry, true)}>
+                    FOLLOW HEIR ↗
+                  </button>
+                  <button
+                    disabled={locked}
+                    onClick={() => recall(entry, false)}
+                  >
+                    REPLAY EPOCH ↻
+                  </button>
+                </div>
+              </article>
+            ))}
         </div>
       )}
+      <div className="chronicle-pagination">
+        <span>
+          {Math.min(visibleCount, entries.length)} / {entries.length} FOSSILS IN
+          VIEW
+        </span>
+        <button
+          disabled={visibleCount >= entries.length}
+          onClick={() => setVisibleCount((count) => count + 12)}
+        >
+          EXHUME 12 OLDER EPOCHS ↓
+        </button>
+      </div>
       <div className="chronicle-storage" role="status">
         {saveStatus}
       </div>

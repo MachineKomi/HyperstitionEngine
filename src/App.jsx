@@ -164,7 +164,7 @@ export default function App() {
           </p>
         </div>
         <div className="hero-note">
-          <span className="status-dot" /> SELF-RETURNING ORACLE / v0.13
+          <span className="status-dot" /> SELF-RETURNING ORACLE / v0.14
           <br />
           <p>
             The output becomes the input.

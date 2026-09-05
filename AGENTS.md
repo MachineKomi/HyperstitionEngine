@@ -12,6 +12,7 @@ Automatic mode is the default experience; the user can set a seed and clearly sw
 
 - Inspect the working tree and current instructions before editing. Preserve unrelated user changes. Coordinate file ownership when delegating.
 - Keep rule execution deterministic where promised. Record the seed, inputs, selected source order, relevant versions and interventions needed for replay. Keep display timing separate from decisions.
+- Reserve graph positions and reading-panel dimensions before automatic growth. A pinned specimen must retain its text, scroll position and provenance while the live lineage advances. Check element rectangles across multiple epochs when changing the instrument layout.
 - Preserve parent links and source traces. An archive boundary must accept every valid record the engine emits. Test long roots, abort/resume and retention behavior when changing feedback or persistence.
 - Bound trees, histories, queues, caches and candidate pools. Cancel stale asynchronous work and clean up workers, timers and subscriptions.
 - Verify responsive behavior at phone, tablet and desktop widths, including landscape and long text. Keep manual/stop controls visible, focusable and usable with reduced motion.
