@@ -1,0 +1,15 @@
+# Seed foundry · v0.22
+
+Every fresh page load initializes three 0–255 dials (phase, grain, tension) and two boolean switches (mirror, feedback) from one Web Crypto random word. A second independent word supplies the initial draw. Initialization happens once in the store module, outside React renders and effects; mode changes, clock changes and tab visibility do not draw new seeds.
+
+The controls are explicit inputs to **seed-mixer-1**, not claims about how phase or feedback govern the resulting prose. Their names belong to the instrument's visual language. The UI says this directly. Native range inputs support pointer and keyboard adjustment without introducing a vertical gesture capture area. Switches expose checked state and honor reduced motion.
+
+Each press of **New seed & restart** obtains a fresh unsigned 32-bit word using `crypto.getRandomValues`, mixes it with a snapshot of all five controls and restarts automatic mode with the result. Controls remain at the user's chosen settings. Their edits affect only the next draw; the current seed and lineage remain intact. The button shares the existing manual-generation busy gate. The engine's existing cancellation boundary handles restart during automatic work.
+
+The mixer packs the three dial bytes and two switch bits into 26 bits, avalanches that configuration with a fixed version salt, XORs it with the random word and avalanches again. Multiplications use `Math.imul`; shifts and the final unsigned conversion give stable 32-bit behavior. For fixed controls the mapping is a permutation of random words. Controls change which seed a given word selects; they do not increase the seed's 32-bit capacity or make a security claim. A fresh draw can coincidentally repeat a prior seed.
+
+The store holds one receipt: mixer version, raw word, control snapshot and final seed. The UI displays the raw word in hexadecimal and final seed in decimal. It marks controls changed since that receipt as **Next draw modified**. Exact numeric submission clears the draw receipt. A zero seed is valid.
+
+The resulting numeric origin seed is sufficient to repeat the conductor's decisions with the same corpus and relevant engine versions. No mixer controls or random words enter the running conductor, composition or observer learning. Existing chronicle records already preserve the origin seed; this change does not alter their schema or older replay behavior. The receipt is ephemeral and is not added to archives. No gesture timing, biometric input or hidden interaction history is collected.
+
+Verification includes controlled random-word fixtures, every position of each dial, both switches, unsigned boundaries, immutable receipts, no restart on control/mode edits, observer initialization and exact zero. Browser checks cover independent page loads, keyboard adjustment, new-seed restart from both modes, numeric entry, mobile-to-desktop layouts and stable panel dimensions across automatic epochs. These are browser viewport checks, not physical-phone measurements.

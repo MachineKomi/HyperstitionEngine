@@ -112,6 +112,16 @@ This records changes to project practice. It does not record changes to a model'
 
 **Verification.** Sixty-six tests pass. The production browser check covers eight viewports, dragging, panning, folding, point picking, keyboard controls, touch scrolling and stable phone rectangles across three completed epochs. A separate 96-record fixture verifies held text and scroll through eviction. The release note distinguishes synthetic compute measurements from browser and physical-device evidence. Revisit metric weighting and physical-phone navigation before adding more dimensions.
 
+## 6 September 2026 · v0.22 · Chance at the boundary, memory within the run
+
+**Request and observation.** The user found that startup always chose 137 and requested randomized seeds, randomized controls and a visible way to contribute human choices. The site store did initialize both the conductor seed and observer from 137.
+
+**Experiment.** A once-per-load seed selection randomizes three dials and two switches, then draws a seed from independent Web Crypto randomness and their values. Editing a control changes the next draw only. A new draw restarts; exact numeric entry keeps reproducible replay available. A bounded receipt distinguishes the random selection process from the deterministic lineage that follows it.
+
+**Interpretation and limits.** Explicit control values give the user a causal hand in selecting the origin without making claims about thought, consciousness or cryptographic entropy. The 32-bit output can repeat by chance. Instrument names are not semantic writing parameters. Existing guidance already separates timing from decisions and asks for replay inputs; no new AGENTS.md obligation is warranted.
+
+**Verification.** Seventy tests pass, including all positions of each dial and both switch states under fixed randomness, immutable receipts and seed-zero restart. Browser validation checks fresh loads, keyboard and pointer controls, responsive geometry and uninterrupted epochs. Revisit additional controls only if user observation identifies a missing decision, rather than adding decoration without an effect.
+
 ## Amendment record format
 
 For future entries, record:

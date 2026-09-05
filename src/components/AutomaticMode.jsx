@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import useEntropyStore from "../store/entropyStore";
 import ClockConsole from "./ClockConsole";
+import SeedConsole from "./SeedConsole";
 
 export function ModeSwitch() {
   const mode = useEntropyStore((state) => state.automaticMode);
@@ -29,6 +30,7 @@ export default function AutomaticMode() {
     automaticStatus,
     automaticError,
     restartAutomatic,
+    randomizeAutomaticSeed,
     isGenerating,
     clockPaused,
   } = useEntropyStore();
@@ -103,6 +105,7 @@ export default function AutomaticMode() {
         </button>
         <a href="#sprawl">WATCH IT UNFOLD ↓</a>
       </form>
+      <SeedConsole disabled={!automaticMode && isGenerating} onGenerate={() => setDraft(String(randomizeAutomaticSeed()))} />
       <ClockConsole />
       {automaticError && (
         <p className="error-banner" role="alert">

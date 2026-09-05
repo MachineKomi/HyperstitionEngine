@@ -1,0 +1,48 @@
+.seed-console {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin-top: 20px;
+  padding: 18px 0 0;
+  border-top: 1px solid #655039;
+  font-variant-numeric: tabular-nums;
+}
+.seed-foundry-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; justify-content: space-between; }
+.seed-foundry-heading .eyebrow { margin: 0; font-size: 10px; }
+.seed-foundry-state { font-size: 9px; color: #d7bd89; min-width: 154px; }
+.seed-help { font-size: 12px; line-height: 1.65; color: #b8aa93; margin: 10px 0 14px; max-width: 85ch; }
+.seed-instruments { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 0.8fr); gap: 24px; align-items: center; }
+.seed-dials { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.seed-dial { display: flex; align-items: center; flex-direction: column; min-width: 0; padding: 10px 6px 8px; background: linear-gradient(135deg, #252319, #10120e); border: 1px solid #4f4732; }
+.seed-dial-title { font-size: 10px; letter-spacing: 1px; color: #ecd5a8; }
+.seed-dial svg { width: min(100%, 100px); display: block; margin-top: 7px; }
+.seed-knob { fill: #24261c; stroke: #a68b55; stroke-width: 1.5; }
+.seed-dial text { fill: #b6a276; font: 12px "IBM Plex Mono", monospace; }
+.seed-dial:focus-within { border-color: #f3af47; }
+.seed-dial input { display: block; width: 100%; min-width: 0; height: 44px; margin: 0; accent-color: #f3af47; cursor: ew-resize; }
+.seed-dial output { color: #d7bd89; font-size: 10px; white-space: nowrap; }
+.seed-switches { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.seed-switches button { display: flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: 8px; min-height: 54px; padding: 10px; font-size: 10px; color: #c1b39a; }
+.seed-switches button small { font-size: 9px; min-width: 3ch; }
+.seed-switch-track { width: 30px; height: 16px; border: 1px solid #766245; background: #080a07; padding: 2px; }
+.seed-switch-track i { display: block; width: 10px; height: 10px; background: #887c63; transition: transform 120ms ease; }
+.seed-switches [aria-checked="true"] { border-color: #b28b43; color: #f4c86e; background: #2b2818; }
+.seed-switches [aria-checked="true"] i { transform: translateX(14px); background: #f4c86e; box-shadow: 0 0 8px #f4c86e55; }
+.seed-generate { width: 100%; min-height: 54px; margin-top: 12px; border: 1px solid #c29546; background: linear-gradient(110deg, #3b301c, #202317); color: #f8cf7b; font-size: 12px; letter-spacing: 0.7px; }
+.seed-generate span { display: inline-block; margin-right: 8px; font-size: 20px; vertical-align: middle; }
+.seed-generate:active:not(:disabled) { transform: translateY(1px); background: #4a3b20; }
+.seed-receipt { margin: 12px 0 0; min-height: 36px; color: #b8aa93; font-size: 10px; line-height: 1.8; overflow-wrap: anywhere; }
+.seed-receipt strong { color: #f4c86e; }
+.seed-footnote { margin-bottom: 0; font-size: 11px; }
+@media (max-width: 700px) {
+  .seed-instruments { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .seed-dials { gap: 6px; }
+  .seed-dial { padding-inline: 3px; }
+  .seed-dial-title { font-size: 9px; letter-spacing: 0; }
+  .seed-dial output { font-size: 9px; }
+  .seed-switches button { padding: 8px 5px; gap: 5px; }
+  .seed-generate { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .seed-switch-track i { transition: none; }
+  .seed-generate:active:not(:disabled) { transform: none; }
+}

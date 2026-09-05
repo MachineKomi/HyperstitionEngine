@@ -1,7 +1,10 @@
 import { create } from "zustand";
 import { clampClockRate } from "../engine/clock.js";
 import { createObserver, observeEpoch } from "../engine/observer.js";
-const useEntropyStore = create((set) => ({
+import { createSeedSelection, drawSeed } from "../engine/seed.js";
+// Once per page load, outside React's render/effect lifecycle.
+const initialSelection = createSeedSelection();
+const useEntropyStore = create((set, get) => ({
   entropyLevel: 0,
   maxEntropy: 1000,
   selectedSpirits: ["N_Land", "Bible", "AI"],
@@ -11,7 +14,15 @@ const useEntropyStore = create((set) => ({
   cogTurns: 0,
   sprawlPopulation: 0,
   automaticMode: true,
-  automaticSeed: 137,
+  automaticSeed: initialSelection.seed,
+  seedControls: initialSelection.controls,
+  seedReceipt: initialSelection,
+  setSeedControls: (seedControls) => set({ seedControls }),
+  randomizeAutomaticSeed: () => {
+    const receipt = drawSeed(get().seedControls);
+    get().restartAutomatic(receipt.seed, receipt);
+    return receipt.seed;
+  },
   automaticRevision: 0,
   automaticStatus: "loading",
   automaticError: "",
@@ -22,7 +33,7 @@ const useEntropyStore = create((set) => ({
   machineAction: null,
   machineActions: [],
   machineEpochs: [],
-  machineObserver: createObserver(137),
+  machineObserver: createObserver(initialSelection.seed),
   automaticOracle: "",
   automaticOracleProgress: "",
   setMachineAction: (action) =>
@@ -94,9 +105,10 @@ const useEntropyStore = create((set) => ({
     ),
   setAutomaticStatus: (automaticStatus, automaticError = "") =>
     set({ automaticStatus, automaticError }),
-  restartAutomatic: (automaticSeed) =>
+  restartAutomatic: (automaticSeed, seedReceipt = null) =>
     set((state) => ({
       automaticSeed,
+      seedReceipt,
       automaticRevision: state.automaticRevision + 1,
       automaticMode: true,
       automaticStatus: "loading",
