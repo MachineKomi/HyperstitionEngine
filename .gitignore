@@ -121,3 +121,12 @@ raw_corpus_source/
 ingestor/venv/
 __pycache__/
 
+
+# Local verification artifacts
+output/
+.playwright-cli/
+
+# Deployment links and environment secrets
+.vercel/
+.env.*
+!.env.example

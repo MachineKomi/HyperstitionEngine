@@ -1,63 +1,51 @@
-# HyperstitionEngine Instructions
+# Run the Machine Chapel
 
-## 1. Prerequisites
-- **Node.js**: Ensure you have Node.js installed (v18+ recommended).
-- **Python**: Ensure you have Python 3.9+ installed.
-- **Git**: Ensure Git is installed.
+## Frontend
 
-## 2. Setup
+Install Node.js 18+ and npm, then run from the repository root:
 
-### A. Install Dependencies
-1.  **Frontend (React)**:
-    ```bash
-    npm install
-    ```
-2.  **Ingestor (Python)**:
-    ```bash
-    cd ingestor
-    pip install -r requirements.txt
-    python -m spacy download en_core_web_sm
-    cd ..
-    ```
+```sh
+npm ci
+npm run dev
+```
 
-### B. Process the Corpus
-The `raw_corpus_source` directory contains your source texts (PDFs and TXTs).
-To process them into the format required by the engine:
+Open the local URL printed by Vite. The repository includes its processed corpus; no Python setup is required to use the oracle.
 
-1.  Run the ingestor script:
-    ```bash
-    python ingestor/process_corpus.py
-    ```
-2.  This will create:
-    - `src/assets/corpus/*.json`: Processed data for each "Spirit" (author/topic).
-    - `src/assets/corpus/corpus_manifest.json`: An index of all processed data.
+For a production check:
 
-### C. Run the Application
-1.  Start the development server:
-    ```bash
-    npm run dev
-    ```
-2.  Open your browser to the URL shown (usually `http://localhost:5173`).
+```sh
+npm run build
+npm run preview -- --host 127.0.0.1
+```
 
-## 3. Version Control
-Since the `gh` CLI was not available, you need to manually push to GitHub:
+## Optional corpus ingestion
 
-1.  Create the repository `HyperstitionEngine` on your GitHub (`MachineKomi`).
-2.  Link your local repository:
-    ```bash
-    git remote add origin https://github.com/MachineKomi/HyperstitionEngine.git
-    ```
-3.  Push the initial commit:
-    ```bash
-    git push -u origin master
-    ```
+To process your own PDF or TXT sources:
 
-## 4. Project Structure
-- `src/`: React source code.
-- `ingestor/`: Python scripts for data processing.
-- `raw_corpus_source/`: Your private collection of texts (Ignored by Git).
-- `bootstrap/`: Design documents.
+```sh
+python -m pip install -r ingestor/requirements.txt
+python -m spacy download en_core_web_sm
+python ingestor/process_corpus.py
+```
 
-## 5. Troubleshooting
-- **Missing Corpus**: If the app shows "Corpus not loaded", ensure you ran the python script.
-- **Encoding Errors**: If `process_corpus.py` fails on a file, check if it's a valid PDF or UTF-8 encoded TXT.
+Keep private source files in the ignored `raw_corpus_source/` directory. The pipeline writes corpus JSON and its manifest to `src/assets/corpus/`. Rebuild the frontend after changing them.
+
+## Operation
+
+The site opens in AUTO mode. Wait for ORACLE ONLINE and watch the tree grow. The engine supplies entropy, chooses growth settings and selection pressure, and feeds each heir into the next epoch. Set ORIGIN SEED and choose RESTART FROM SEED to replay from the beginning. Use the top-bar MANUAL button to stop and take control. Hidden tabs pause automatically; no accumulated work bursts on return.
+
+In MANUAL mode, select aspects, wait for ORACLE ONLINE, then charge the field with pointer movement or the CHARGE FIELD button. A ritual requires 20 entropy. INVOKE generates one transmission; MULTIPLY generates 50 using the current protocol and aspects.
+
+REBIRTH resets entropy and increments the cycle. The latest 200 transmissions stay in the current session. Export or copy them before reloading or closing the page.
+
+In AUTOPOIESIS, BEGIN POSSESSION runs successive epochs using the origin and growth controls above it. Choose a selection pressure and epoch horizon. Each started epoch costs 20 entropy; END POSSESSION interrupts the loop. The last 108 completed epochs are saved in this browser's chronicle. Export/import backs up that chronicle; REPLAY EPOCH restores its origin, source settings, and selection pressure, while FOLLOW HEIR starts from its winning fragment.
+
+## Checks and troubleshooting
+
+- `npm test`: engine/store regression tests.
+- `npm run lint`: ESLint and React hook checks.
+- If no aspects are selected, select one to enable binding.
+- Failed corpus or worker operations show an error with RETRY BINDING.
+- Clipboard access may be unavailable in some browser contexts; EXPORT saves a text file instead.
+- Generation is local. Google Fonts are optional; system font fallbacks work offline.
+- The inherited dependency tree currently reports npm audit advisories. Review them before exposing a development server publicly; the preview command above binds to loopback.

@@ -41,7 +41,7 @@ const MYSTICAL_LOGS = [
 
 const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>/?░▒▓█▄▀■□▪▫▲▼►◄◊○●★☆†‡§¶";
 
-const LoadingScreen = ({ onComplete }) => {
+const LoadingScreen = () => {
     const [logs, setLogs] = useState([]);
     const [progress, setProgress] = useState(0);
     const [scrambledTitle, setScrambledTitle] = useState("HYPERSTITION_ENGINE");

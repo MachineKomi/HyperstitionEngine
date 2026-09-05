@@ -1,13 +1,14 @@
 {
   "name": "hyperstition-engine",
   "private": true,
-  "version": "0.9.1",
+  "version": "0.13.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test"
   },
   "dependencies": {
     "markov-strings": "^3.0.1",

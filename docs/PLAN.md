@@ -1,5 +1,7 @@
 # Visual & UX Polish Plan
 
+> Historical v0.9-era plan, retained for context. The current direction and acceptance criteria are in [ROADMAP.md](ROADMAP.md); this file's old paths, fixed-width layout and simulated loading proposals are not current implementation instructions.
+
 ## Goal
 Implement user feedback regarding loading screen aesthetics, entropy pool visuals, and general layout.
 
