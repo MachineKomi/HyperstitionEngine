@@ -8,6 +8,7 @@ import './continuity.css'
 import './memory.css'
 import './conductor.css'
 import './geometry.css'
+import './atlas.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>

@@ -35,6 +35,8 @@ The current plan does not include training a foundation model, autonomous networ
 
 ## P0 · The next complete increments
 
+**v0.21 checkpoint:** the [atlas](ATLAS.md) provides 2D/3D/6D projections of retained automatic heirs, camera navigation, succession and proximity edges, and a held inspector that survives window eviction. Next: compare alternative distance weightings on saved histories, expose source-transition paths as a separately defined graph, and test physical-device navigation. Do not infer semantic neighborhoods from the present lexical and procedural coordinates.
+
 **v0.20 checkpoint:** [geometry and navigation](GEOMETRY.md) add a page-scroll lane, persistent mobile section links, measured source distributions and a tiny recurrent observer. The observer lost to the moving-average baseline on the recorded 36-epoch development stream. Next: evaluate multiple unseen seeds and text-feature ablations; measure rendering and binding on physical phones. Keep the observer separate from generation until predictive value and an explicit literary objective justify a versioned experiment.
 
 ### 0A. Stabilize the automatic encounter

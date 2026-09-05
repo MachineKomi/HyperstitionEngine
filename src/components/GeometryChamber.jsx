@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import useEntropyStore from "../store/entropyStore";
 import { sourceStatistics, UNITS } from "../engine/observer";
+import PhaseAtlas from "./PhaseAtlas";
 
 const point = (i, n, radius) => [180 + radius * Math.cos(i * Math.PI * 2 / n - Math.PI / 2),
   180 + radius * Math.sin(i * Math.PI * 2 / n - Math.PI / 2)];
@@ -21,6 +22,7 @@ function GeometryChamber() {
           <h2 id="geometry-title">A small mind. An open circuit.</h2></div>
         <span className="geometry-badge">24 NEURONS · 25 LEARNED WEIGHTS</span>
       </header>
+      <PhaseAtlas />
       <div className="geometry-grid">
         <div className="reservoir-panel">
           <div className="geometry-caption"><b>THE RESERVOIR</b><span>EPOCH {observer.count.toString().padStart(3, "0")}</span></div>

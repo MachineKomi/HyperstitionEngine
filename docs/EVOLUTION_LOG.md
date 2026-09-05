@@ -100,6 +100,18 @@ This records changes to project practice. It does not record changes to a model'
 
 **Verification and guidance.** Sixty tests pass. Nine browser sizes, real wheel input, emulated touch gestures and scroll chaining verify the mobile fix. Twenty-eight phone rectangle samples spanning three completed epochs remained stable. The existing AGENTS.md rules already require responsive checks, bounded state and measured claims; no new obligation or automatic self-edit is warranted. Next: unseen seeds, feature ablations and physical-phone profiling.
 
+## 5 September 2026 · v0.21 · A projection is a claim with omissions
+
+**Request and evidence.** The user asked for navigable 2D, 3D and higher-dimensional graphs, and evolving project instructions. A six-dimensional regression constructs two distinct states that project to the same point, then separates them with a plane rotation. This demonstrates why a screen-space neighborhood alone cannot establish a full-space relationship.
+
+**Experiment.** The [atlas](ATLAS.md) projects six fixed-scale engine measurements. Gold edges denote succession; violet edges denote two-nearest-neighbor relationships in the selected measured dimensions. Orbit, pan, zoom and framing change the view. The native selector can reach overlapping points, and a held record remains inspectable after the live window evicts it.
+
+**Interpretation and contrary evidence.** Land's return paths and Nietzsche's changing functions motivate traceable relationships. Abbott's dimensional story motivates manipulable examples; Hamming motivates an answerable question behind a diagram. These are design interpretations. The atlas does not estimate a semantic manifold, validate a philosophy or make the observer more accurate. A projection deliberately loses information.
+
+**Changed rule.** AGENTS.md now requires named dimensions, normalization and edge meanings for projected graphs, camera-independent data relationships, and a non-spatial node selector. This is a repository-scoped amendment supported by the overlap regression, not a change of assistant authority or identity.
+
+**Verification.** Sixty-six tests pass. The production browser check covers eight viewports, dragging, panning, folding, point picking, keyboard controls, touch scrolling and stable phone rectangles across three completed epochs. A separate 96-record fixture verifies held text and scroll through eviction. The release note distinguishes synthetic compute measurements from browser and physical-device evidence. Revisit metric weighting and physical-phone navigation before adding more dimensions.
+
 ## Amendment record format
 
 For future entries, record:
