@@ -12,7 +12,7 @@ export default function OracleDisplay() {
     sessionHistory
       .map(
         (item) =>
-          `[${item.time}] CYCLE ${item.cycle} / ${item.mode.toUpperCase()} / ${item.aspects.join(" + ")} / ENTROPY ${item.entropy}${item.seed !== undefined ? ` / SEED ${item.seed} / EPOCH ${item.epoch} / FRAGMENT ${item.fragmentId} / ${item.operator}` : ""}\n${item.text}${item.sourceFragment ? `\n[GRAFT: ${item.source}] ${item.sourceFragment}\n[INHERITED] ${item.inheritedFragment}` : ""}`,
+          `[${item.time}] CYCLE ${item.cycle} / ${item.mode.toUpperCase()} / ${item.aspects.join(" + ")} / ENTROPY ${item.entropy}${item.seed !== undefined ? ` / SEED ${item.seed} / EPOCH ${item.epoch} / FRAGMENT ${item.fragmentId} / ${item.operator}` : ""}\n${item.text}${item.sourceFragment ? `\n[GRAFT: ${item.source}] ${item.sourceFragment}\n[INHERITED] ${item.inheritedFragment}` : ""}${item.sourceTrace ? `\n[ADDRESS] ${item.sourceTrace.id} / UTF-16 ${item.sourceTrace.start}:${item.sourceTrace.end}\n[RECORDED EXTRACTION] ${item.sourceTrace.original}` : ""}`,
       )
       .join("\n\n");
   async function copy() {

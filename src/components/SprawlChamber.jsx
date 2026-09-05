@@ -13,6 +13,7 @@ import {
   runAutomatic,
 } from "../engine/automatic";
 import FlowChamber from "./FlowChamber";
+import SourceEvidence from "./SourceEvidence";
 import { createPlaybackClock } from "../engine/clock";
 import { sprawlPositions } from "../engine/topology";
 
@@ -313,6 +314,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
           pressure: entry.pressure,
           source: entry.champion.source,
           sourceFragment: entry.champion.sourceFragment,
+          sourceTrace: entry.champion.sourceTrace,
           inheritedFragment: entry.champion.inheritedFragment,
           operator: entry.champion.operator,
           entropy: entry.settings.entropy,
@@ -426,6 +428,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
       epoch: specimenRun.epoch,
       source: selected.source,
       sourceFragment: selected.sourceFragment,
+      sourceTrace: selected.sourceTrace,
       inheritedFragment: selected.inheritedFragment,
       entropy: specimenRun.entropy,
       cycle: specimenRun.cycle,
@@ -810,18 +813,24 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
               † BURN BRANCH
             </button>
           </div>
-          <details className="fragment-trace">
+          <details
+            className="fragment-trace"
+            onToggle={(event) => {
+              if (
+                event.currentTarget.open &&
+                automaticMode &&
+                selected &&
+                !pinned
+              )
+                setPinned({ node: selected, run });
+            }}
+          >
             <summary>EXAMINE THE GRAFT</summary>
+            <SourceEvidence node={selected} />
             <p>
               <b>Inherited:</b>{" "}
               {selected?.inheritedFragment ||
                 "The origin has no inherited graft."}
-            </p>
-            <p>
-              <b>{selected?.source || "ORIGIN"}:</b>{" "}
-              {selected?.sourceFragment ||
-                selected?.text ||
-                "Waiting for the first source."}
             </p>
           </details>
           <button

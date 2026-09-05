@@ -3,12 +3,14 @@ import useEntropyStore from "../store/entropyStore";
 import { runFlow } from "../engine/flow";
 import {
   CHRONICLE_LIMIT,
+  CHRONICLE_FILE_LIMIT,
   CHRONICLE_KEY,
   chronicleDocument,
   mergeChronicle,
   readChronicle,
   validateChronicle,
 } from "../services/chronicle";
+import SourceEvidence from "./SourceEvidence";
 
 const pressures = [
   {
@@ -218,8 +220,8 @@ export default function FlowChamber({
     event.target.value = "";
     if (!file || locked) return;
     try {
-      if (file.size > 2 * 1024 * 1024)
-        throw new Error("Chronicles must be smaller than 2 MB.");
+      if (file.size > CHRONICLE_FILE_LIMIT)
+        throw new Error("Chronicles must be smaller than 16 MB.");
       const incoming = validateChronicle(JSON.parse(await file.text()));
       if (!alive.current) return;
       setEntries((previous) => mergeChronicle(previous, incoming));
@@ -430,6 +432,7 @@ export default function FlowChamber({
                   </button>
                   {expanded === entry.id && (
                     <div className="fossil-detail">
+                      <SourceEvidence node={entry.champion} />
                       <p>
                         <b>ORIGIN</b> {entry.settings.root}
                       </p>

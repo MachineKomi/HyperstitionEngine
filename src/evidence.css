@@ -1,0 +1,134 @@
+.fragment-trace[open] {
+  height: 420px;
+}
+.source-evidence {
+  padding: 12px 0;
+  min-width: 0;
+  color: #bba7c8;
+}
+.source-address {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font:
+    10px/1.8 "IBM Plex Mono",
+    monospace;
+  color: #d2b48b;
+}
+.source-address b {
+  font-weight: 500;
+}
+.source-address span {
+  white-space: nowrap;
+}
+.source-views {
+  display: flex;
+  gap: 6px;
+  margin: 12px 0;
+}
+.source-views button {
+  flex: 1;
+  min-height: 44px;
+  padding: 8px;
+  font-size: 9px;
+  border-color: #675373;
+}
+.source-views button[aria-pressed="true"] {
+  background: #322639;
+  color: #e4d1ed;
+  border-color: #b68dca;
+}
+.source-context {
+  height: 190px;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+  padding: 14px;
+  border: 1px solid #584562;
+  background: linear-gradient(135deg, #19141e, #111013);
+}
+.source-context p,
+.source-context li {
+  margin: 0;
+  font:
+    17px/1.75 Georgia,
+    serif;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #d9cde1;
+}
+.source-context mark {
+  color: #f9e5b8;
+  background: #78552865;
+  border-bottom: 1px solid #d39d54;
+  padding-block: 2px;
+}
+.source-context ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.source-context li {
+  padding: 10px;
+  border-left: 2px solid #4b3f52;
+  margin-bottom: 12px;
+}
+.source-context li.grafted-unit {
+  border-color: #d39d54;
+  background: #5b482b33;
+}
+.source-context li small {
+  display: block;
+  font:
+    9px/1.8 "IBM Plex Mono",
+    monospace;
+  color: #ac926a;
+}
+.source-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 12px;
+}
+.source-flags span {
+  padding: 3px 7px;
+  border: 1px solid #574b3b;
+  color: #c4ad87;
+  font-size: 9px;
+  line-height: 1.7;
+}
+.source-credit,
+.source-evidence > small {
+  font:
+    10px/1.8 "IBM Plex Mono",
+    monospace;
+  color: #9d8ba7;
+}
+.source-fingerprint {
+  display: block;
+  font-size: 9px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+  color: #95829f;
+}
+.source-unaddressed p {
+  font:
+    17px/1.7 Georgia,
+    serif;
+}
+.fossil-detail .source-evidence {
+  border-bottom: 1px solid #42553c;
+  margin-bottom: 14px;
+}
+@media (max-width: 600px) {
+  .source-address {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .source-context {
+    padding: 10px;
+  }
+  .source-views button {
+    font-size: 8px;
+  }
+}

@@ -30,6 +30,18 @@ This records changes to project practice. It does not record changes to a model'
 
 **Revisit.** Reassess the default clock after reader feedback, and the fixed panel heights with larger text settings. Keep explicit expansion and viewport resizing possible; the rule concerns unwanted changes during automatic growth.
 
+## 2026-09-05 · Give the cut an address
+
+**Evidence.** The existing generator retained normalized word windows and broad source groups, losing the extraction position. The corpus manifest names multiple works inside several groups. A group name therefore cannot establish an individual work or quoted speaker. The existing Land reading's distinction between author, editor and quoted voice becomes an inspectable engineering constraint here.
+
+**Experiment.** Record the original unit and exact span, hash the parsed corpus, preserve the extraction for inspection and expose uncertain punctuation/quality cues. Keep the composer unchanged. Opening evidence pins the specimen rather than making the reader chase it.
+
+**Guidance.** AGENTS.md now requires checking normalized grafts against original offsets, including whitespace and Unicode edges, and forbids inferring individual attribution from a collection label. Its publishing preference also reflects the user's request to push every meaningful completed checkpoint.
+
+**Verification and limits.** The [source report](SOURCE_EVIDENCE.md) records 51,919 eligible units, four offset/window checks per unit, a matching 30-seed legacy baseline, archive validation and browser checks. A punctuation-only token exposed a trailing-space edge case during implementation; the span normalization now preserves that legacy behavior. The 250-epoch measurement excludes UI/network work. No neural model, additional filtering, complete clause dataset or measured literary-quality improvement is claimed.
+
+**Next test.** Compare a versioned intact-unit composer with the preserved baseline. Treat reference/OCR flags as review cues until classification has been evaluated; unusual form can be intentional.
+
 ## Amendment record format
 
 For future entries, record:

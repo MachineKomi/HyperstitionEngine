@@ -22,7 +22,7 @@ The flow uses the source settings and origin configured above it. Controls that 
 
 The last 108 completed epochs are saved under `hyperstition.chronicle.v1` in localStorage for this browser and origin. This is separate from the older session-only transmission log and temporary organism tree. New records beyond 108 replace the oldest records; export regularly to keep longer histories.
 
-**EXPORT CHRONICLE** downloads the retained epochs. **IMPORT CHRONICLE** validates and merges such an export, deduplicating record IDs. The importer accepts the version-1 chronicle format, up to 108 entries and 2 MB. It does not accept the single-organism export format.
+**EXPORT CHRONICLE** downloads the retained epochs. **IMPORT CHRONICLE** validates and merges such an export, deduplicating record IDs. The importer accepts the version-1 chronicle format, up to 108 entries and files below 16 MiB. New records include bounded source context; old records remain readable. It does not accept the single-organism export format.
 
 **REPLAY EPOCH** restores its original phrase, source selection, seed, and growth controls. Open the circuit to reproduce that tree against the same corpus version. **FOLLOW HEIR** installs the winning text and next seed as a new origin.
 

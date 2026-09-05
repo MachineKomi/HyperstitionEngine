@@ -1,4 +1,5 @@
 import { waitForPulse } from "./clock.js";
+import { windowSpan, sourceAddress } from "./sourceSpans.js";
 // Original procedural writing rules: source fragments are recombined, never LLM-generated.
 export function randomStream(seed) {
   let state = seed >>> 0;
@@ -32,12 +33,7 @@ const clean = (text) => text.replace(/\s+/g, " ").trim();
 export const normalizeRoot = (text) => text.trim().slice(0, 1200).trim();
 const words = (text) => clean(text).split(" ").filter(Boolean);
 const fragment = (text, rng, count = 9) => {
-  const tokens = words(text);
-  const start = Math.floor(rng() * Math.max(1, tokens.length - count + 1));
-  return tokens
-    .slice(start, start + count)
-    .join(" ")
-    .replace(/[.!?;:,]+$/, "");
+  return windowSpan(text, rng, count).text;
 };
 const rites = [
   [
@@ -75,16 +71,25 @@ const rites = [
 export class SprawlEngine {
   loadCorpus(spirits) {
     this.sources = spirits
-      .map((spirit) => ({
-        id: spirit.id,
-        sentences: (spirit.sentences || []).map(clean).filter((text) => {
-          const count = words(text).length;
-          return count >= 6 && count <= 65 && !/https?:|@|\bdoi\b/i.test(text);
-        }),
-        nouns: (spirit.pos?.nouns || []).filter((word) =>
-          /^[\p{L}-]{3,24}$/u.test(word),
-        ),
-      }))
+      .map((spirit) => {
+        const records = (spirit.sentences || [])
+          .map((original, unit) => ({ original, unit, text: clean(original) }))
+          .filter(({ text }) => {
+            const count = words(text).length;
+            return (
+              count >= 6 && count <= 65 && !/https?:|@|\bdoi\b/i.test(text)
+            );
+          });
+        return {
+          id: spirit.id,
+          version: spirit.sourceVersion || null,
+          records,
+          sentences: records.map((record) => record.text),
+          nouns: (spirit.pos?.nouns || []).filter((word) =>
+            /^[\p{L}-]{3,24}$/u.test(word),
+          ),
+        };
+      })
       .filter((source) => source.sentences.length);
     if (!this.sources.length)
       throw new Error("No usable fragments in these aspects.");
@@ -92,14 +97,18 @@ export class SprawlEngine {
 
   mutate(parent, rng, mutation) {
     const source = this.sources[Math.floor(rng() * this.sources.length)];
-    const sentence =
-      source.sentences[Math.floor(rng() * source.sentences.length)];
+    const record = source.records[Math.floor(rng() * source.records.length)];
     const inherited = fragment(
       parent.text,
       rng,
       6 + Math.floor((1 - mutation) * 10),
     );
-    const incoming = fragment(sentence, rng, 4 + Math.floor(mutation * 10));
+    const incomingSpan = windowSpan(
+      record.original,
+      rng,
+      4 + Math.floor(mutation * 10),
+    );
+    const incoming = incomingSpan.text;
     const noun =
       source.nouns[Math.floor(rng() * source.nouns.length)] || "circuit";
     const [operator, compose] = rites[Math.floor(rng() * rites.length)];
@@ -110,6 +119,14 @@ export class SprawlEngine {
       source: source.id,
       sourceFragment: incoming,
       inheritedFragment: inherited,
+      sourceTrace: {
+        id: sourceAddress(source.id, source.version, record.unit),
+        version: source.version,
+        unit: record.unit,
+        original: record.original,
+        start: incomingSpan.start,
+        end: incomingSpan.end,
+      },
     };
   }
 }

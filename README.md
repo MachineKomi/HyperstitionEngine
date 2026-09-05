@@ -1,4 +1,4 @@
-# Hyperstition Engine — The Automatic Cathedral (v0.14)
+# Hyperstition Engine — The Automatic Cathedral (v0.15)
 
 A browser-local cyber-occult writing instrument. It starts exploring by itself: a random seed and five simple rules grow branching fiction, select an heir, and feed the result back into the next generation. A visible **AUTO / MANUAL** switch lets you take control at any moment. No LLM or remote inference is involved in generation.
 
@@ -15,6 +15,8 @@ The **CLOCK SPEED** dial spans **0.25×–32×**. At the default **1×**, the ci
 Select a graph node or choose **PIN TO READ** to hold a specimen while growth continues. **FOLLOW LIVE** returns to the moving lineage; CANONIZE preserves the inspected fragment with its original epoch and source trace. The map reserves node positions before growth, and reading panels hold their size as content changes. The chronicle initially mounts 12 fossils; **EXHUME 12 OLDER EPOCHS** reveals more without reducing export or retention. Automatic mode presents the archive directly; switch to Manual for replay and possession controls.
 
 ## Run
+
+**v0.15 / Source memory:** EXAMINE THE GRAFT now pins the live specimen and shows the recorded extraction with its borrowed span highlighted. PUNCTUATION UNITS exposes conservative boundaries for inspecting where the current word window cuts a thought. New tree, chronicle and transmission exports retain the source address and extraction. Older archives remain readable. Source labels do not establish the speaker or exact work inside a mixed collection. See [source evidence and measurements](docs/SOURCE_EVIDENCE.md).
 
 Requires Node.js 18+ and npm.
 

@@ -90,3 +90,13 @@ The v0.9 items below are historical. Current direction and acceptance criteria l
 - [x] Mount 12 fossils initially and expose older batches without losing retained records.
 - [x] Add mechanical clock/bezel details and honor reduced motion.
 - [x] Verify timing, replay, cancellation, growth/pruning geometry and responsive interactions.
+
+## Source memory v0.15
+- [x] Add corpus fingerprints, exact extraction-unit addresses and original span offsets.
+- [x] Highlight the borrowed span and expose conservative punctuation units in the inspector.
+- [x] Pin live evidence on inspection; retain it in fossils and exports.
+- [x] Preserve old archives and reject malformed new source addresses.
+- [x] Audit all eligible units and preserve 30 legacy seeded trees unchanged.
+- [x] Record a bounded 250-epoch engine benchmark and responsive evidence checks.
+- [ ] Recover work/section/speaker mapping and curate clause candidates (remaining 0B).
+- [ ] Compare a versioned clause composer against the unchanged baseline (0C).

@@ -1,0 +1,191 @@
+{
+  "format": "hyperstition-source-catalog",
+  "version": 1,
+  "sources": {
+    "N_Land": {
+      "version": "0b095379859293c52ff16ef8cf2b5360f51322eee201db5704da01805c3aee7d",
+      "files": [
+        "Nick_Land_Fanged_Noumena.pdf"
+      ],
+      "units": 5709,
+      "eligible": 4484,
+      "largest": 1045,
+      "flags": {
+        "possible editorial matter": 3,
+        "reference material": 8,
+        "quotation marks; speaker unverified": 86,
+        "possible extraction damage": 3
+      }
+    },
+    "Bible": {
+      "version": "81ec09a3e71e41efeaffd38c5a2f0c35c861088039dd716620ca307a939d3cc8",
+      "files": [
+        "Bible_KJV.txt",
+        "Dominions.pdf",
+        "Dominions_4_Chronicles_and_Bestiary.pdf",
+        "Dominions_5_Manual_and_Origins.pdf",
+        "Fishes_Flowers_Fire.txt",
+        "Oriental_Religions_in_Roman_Paganism.txt",
+        "Religion_of_Ancient_Rome.txt",
+        "The_God_Idea_of_the_Ancients.txt",
+        "The_Venus_of_Milo.txt"
+      ],
+      "units": 10089,
+      "eligible": 5927,
+      "largest": 375,
+      "flags": {}
+    },
+    "Marcus_A": {
+      "version": "9adac7b116c5fe849719d123db87ace9d4f838e2e628d25615abecfd8d27b012",
+      "files": [
+        "Aurelius_Meditations.txt"
+      ],
+      "units": 3415,
+      "eligible": 2585,
+      "largest": 415,
+      "flags": {
+        "quotation marks; speaker unverified": 71,
+        "reference material": 70,
+        "possible editorial matter": 14
+      }
+    },
+    "M_Cicero": {
+      "version": "3a58b66c2e79edd0f6eb7fddd558b123e511fe463cf42a06bb4d99a553add11a",
+      "files": [
+        "Cicero_Letters_to_Atticus.txt",
+        "Cicero_The_Orations.txt",
+        "Cicero_Treatises_on_Friendship.txt",
+        "Cicero_Tusculan.txt"
+      ],
+      "units": 12349,
+      "eligible": 8777,
+      "largest": 419,
+      "flags": {
+        "possible editorial matter": 15,
+        "reference material": 326,
+        "quotation marks; speaker unverified": 367
+      }
+    },
+    "F_Nietzsche": {
+      "version": "777d6c799421e90c4ca516d165d0085ea0e757a5b6c42537ec222d904238b3ef",
+      "files": [
+        "Nietzsche_BeyondGoodandEvil.txt",
+        "Nietzsche_Ecce_Homo.txt",
+        "Nietzsche_The_Antichrist.txt",
+        "Nietzsche_Zarathustra.txt"
+      ],
+      "units": 7034,
+      "eligible": 5341,
+      "largest": 438,
+      "flags": {
+        "quotation marks; speaker unverified": 1281,
+        "possible editorial matter": 44,
+        "reference material": 80
+      }
+    },
+    "Yokai": {
+      "version": "95aec09484b598306e4c57f8f3a4b646987bb2cf3b36389602f4e1a5d3f867b9",
+      "files": [
+        "Hearn_Kwaidan.txt",
+        "Myths_of_China_and_Japan.txt",
+        "Ozaki_FairyTales.txt"
+      ],
+      "units": 8727,
+      "eligible": 7838,
+      "largest": 539,
+      "flags": {
+        "quotation marks; speaker unverified": 2183,
+        "reference material": 1225,
+        "possible editorial matter": 30
+      }
+    },
+    "Confucius": {
+      "version": "2a7b71972e29fa80041b90a07acf4d7af99344ec91489c4df6655c6d07b913b3",
+      "files": [
+        "Sunzi_The_Art_of_War.txt",
+        "The_Analects_of_Confucius.txt"
+      ],
+      "units": 4025,
+      "eligible": 2316,
+      "largest": 404,
+      "flags": {
+        "quotation marks; speaker unverified": 58,
+        "possible editorial matter": 28
+      }
+    },
+    "GoBadukWeiqi": {
+      "version": "8963a050e1fe887371f53604a68f8bd11ada008152516e6cd48788848aa95908",
+      "files": [
+        "Accelerating_Self_Play_Learning_in_Go.pdf",
+        "AlphaGoNaturePaper.pdf",
+        "AlphaGoZeroNaturePaper.pdf",
+        "ChoChikun_LifeDeath.pdf",
+        "GoSeigen_Book.pdf"
+      ],
+      "units": 24040,
+      "eligible": 5731,
+      "largest": 715,
+      "flags": {
+        "possible extraction damage": 394,
+        "reference material": 31,
+        "quotation marks; speaker unverified": 98,
+        "possible editorial matter": 17
+      }
+    },
+    "N_Bostrom": {
+      "version": "1852919f16f7d96513d523d0a81f5a0828c500c6e8309b57177553a6ae009a16",
+      "files": [
+        "Bostrom_Risks.pdf",
+        "Bostrom_Simulation.pdf"
+      ],
+      "units": 1247,
+      "eligible": 821,
+      "largest": 689,
+      "flags": {
+        "possible extraction damage": 25,
+        "quotation marks; speaker unverified": 67,
+        "reference material": 60
+      }
+    },
+    "Y_Harari": {
+      "version": "49af4cb5318112a170bdf275070a615bff45541a1248f19f42178fe98fac2e7c",
+      "files": [
+        "Harari_AI_has_hacked_human_operating_system.pdf",
+        "Harari_Government_and_AI.pdf",
+        "Harari_TECHNOLOGY_FAVORS_TYRANNY.pdf"
+      ],
+      "units": 768,
+      "eligible": 700,
+      "largest": 412,
+      "flags": {
+        "quotation marks; speaker unverified": 21,
+        "possible extraction damage": 13
+      }
+    },
+    "AI": {
+      "version": "0aeeb98e1f364483663d11db16a9ea4a3a28bd178fec3305e4c33aeeecc1a497",
+      "files": [
+        "Attention_Is_All_You_Need.pdf",
+        "Awakening_from_the_Meaning_Crisis_Transcripts.txt",
+        "A_Path_Towards_Autonomous_Machine_Intelligence.pdf",
+        "Concrete_Problems_in_AI_Safety.pdf",
+        "Deep_Reinforcement_Learning_from_Human_Preferences.pdf",
+        "kngmkr.txt",
+        "Scaling_Laws_for_Neural_Language_Models.pdf",
+        "Sparks_of_AGI_GPT4.pdf",
+        "The_Singularity_A_Philosophical_Analysis.pdf",
+        "Why_AI_Is_A_Philosophical_Rapture.txt",
+        "World_Models.pdf"
+      ],
+      "units": 10794,
+      "eligible": 7399,
+      "largest": 622,
+      "flags": {
+        "possible extraction damage": 489,
+        "reference material": 172,
+        "quotation marks; speaker unverified": 278,
+        "possible editorial matter": 1
+      }
+    }
+  }
+}

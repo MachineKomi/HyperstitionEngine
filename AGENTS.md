@@ -14,6 +14,7 @@ Automatic mode is the default experience; the user can set a seed and clearly sw
 - Keep rule execution deterministic where promised. Record the seed, inputs, selected source order, relevant versions and interventions needed for replay. Keep display timing separate from decisions.
 - Reserve graph positions and reading-panel dimensions before automatic growth. A pinned specimen must retain its text, scroll position and provenance while the live lineage advances. Check element rectangles across multiple epochs when changing the instrument layout.
 - Preserve parent links and source traces. An archive boundary must accept every valid record the engine emits. Test long roots, abort/resume and retention behavior when changing feedback or persistence.
+- Source offsets address unmodified extraction text. Verify the normalized slice against the actual graft, including whitespace and Unicode edge cases. A collection label cannot establish an individual work or quoted speaker.
 - Bound trees, histories, queues, caches and candidate pools. Cancel stale asynchronous work and clean up workers, timers and subscriptions.
 - Verify responsive behavior at phone, tablet and desktop widths, including landscape and long text. Keep manual/stop controls visible, focusable and usable with reduced motion.
 - Run `npm test`, `npm run lint`, `npm run build`, and `git diff --check` for code releases. Add meaningful regression coverage for behavioral bugs; do not manufacture tests for simple prose edits. Browser-check changed interactions.
@@ -27,4 +28,4 @@ Use a promising output or reading to propose a specific, reversible experiment. 
 
 ## Delivery preference
 
-The user explicitly requested a push to remote `main` each turn. For a turn that changes the project, review the intended files, commit completed work, push normally to `origin main`, and verify the remote commit. Do not force-push or overwrite unrelated history. If remote authentication, protection or another failure blocks the push, retain the local commit and report the precise failure; do not claim publication. Deployment is separate from Git publication and needs its own verification.
+The user explicitly requested a push to remote `main` after every meaningful completed checkpoint. Review the intended files, commit completed work, push normally to `origin main`, and verify the remote commit. Do not force-push or overwrite unrelated history. If remote authentication, protection or another failure blocks the push, retain the local commit and report the precise failure; do not claim publication. Deployment is separate from Git publication and needs its own verification.

@@ -1,4 +1,6 @@
+import { normalizeSpan, sourceAddress } from "../engine/sourceSpans.js";
 export const CHRONICLE_LIMIT = 108;
+export const CHRONICLE_FILE_LIMIT = 16 * 1024 * 1024;
 export const CHRONICLE_KEY = "hyperstition.chronicle.v1";
 
 const number = (value, min, max) =>
@@ -75,6 +77,38 @@ export function validateChronicle(data) {
         "The chronicle contains an invalid epoch. Your current history was kept.",
       );
     ids.add(entry.id);
+    let sourceTrace;
+    if (c.sourceTrace !== undefined) {
+      const t = c.sourceTrace;
+      if (
+        !t ||
+        !(
+          t.version === null ||
+          (typeof t.version === "string" && /^[a-f0-9]{64}$/.test(t.version))
+        ) ||
+        !Number.isInteger(t.unit) ||
+        !number(t.unit, 0, 1000000) ||
+        !text(t.original, 8192) ||
+        !Number.isInteger(t.start) ||
+        !Number.isInteger(t.end) ||
+        !number(t.start, 0, t.original.length) ||
+        !number(t.end, t.start, t.original.length) ||
+        t.id !== sourceAddress(c.source, t.version, t.unit) ||
+        normalizeSpan(t.original.slice(t.start, t.end)) !== c.sourceFragment
+      ) {
+        throw new Error(
+          "The chronicle contains an invalid source address. Your current history was kept.",
+        );
+      }
+      sourceTrace = {
+        id: t.id,
+        version: t.version,
+        unit: t.unit,
+        original: t.original,
+        start: t.start,
+        end: t.end,
+      };
+    }
     // Keep only the fields used by the app, including replay settings and source traces.
     return {
       id: entry.id,
@@ -104,6 +138,7 @@ export function validateChronicle(data) {
         novelty: c.novelty,
         echo: c.echo,
         score: c.score,
+        ...(sourceTrace ? { sourceTrace } : {}),
       },
     };
   });

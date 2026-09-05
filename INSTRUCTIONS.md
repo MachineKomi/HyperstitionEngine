@@ -50,6 +50,9 @@ In AUTOPOIESIS, BEGIN POSSESSION runs successive epochs using the origin and gro
 
 ## Checks and troubleshooting
 
+- EXAMINE THE GRAFT pins the live fragment and opens its highlighted extraction. PUNCTUATION UNITS shows conservative boundaries; FOLLOW LIVE releases the pin. New fossils retain this source evidence after export/import. Older records explicitly lack an exact address.
+- After changing a bundled corpus, run `npm run sources:catalog` and review the fingerprint/count changes. Production builds reject a stale catalog. `npm run bench:sources` measures 250 engine-only epochs with theatrical waits disabled; it is not a browser benchmark.
+
 - `npm test`: engine/store regression tests.
 - `npm run lint`: ESLint and React hook checks.
 - If no aspects are selected, select one to enable binding.

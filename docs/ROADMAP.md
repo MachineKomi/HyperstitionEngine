@@ -47,6 +47,8 @@ The current plan does not include training a foundation model, autonomous networ
 
 ### 0B. Give every fragment an address
 
+**v0.15 checkpoint:** corpus fingerprints, unit/span addresses, recorded extraction highlights, heuristic flags, conservative punctuation-unit inspection and archive preservation are implemented. [Evidence and limits](SOURCE_EVIDENCE.md) distinguish this from the still-open work/section mapping and curated clause dataset. No additional source filtering or composition change ships in this checkpoint.
+
 **Reader need:** inspect where a striking phrase came from and which voice it belongs to.
 
 **Deliverable:** a build-time source manifest and a compact clause dataset. Each record contains a stable ID, work/section, original span, normalized retrieval form, source version, known author or quoted voice, fragment kind and extraction confidence. Keep uncertain attribution explicit. Separate editorial matter, bibliography and clear OCR damage from selectable prose; preserve intentional experimental form as a distinct kind.
@@ -142,6 +144,6 @@ Profundity and unease are editorial judgments. Evaluate whether a reader can art
 
 ## Dependency order and next action
 
-The automatic instrument is deployed on Vercel. The v0.14 clockwork increment adds adjustable pacing, a stable map, pinned reading and bounded initial archive rendering. Next implement **0B source addresses and clause preparation**, accompanied by **0D performance measurement**. That unlocks **0C composition**, then the optional retrieval experiment and motif memory. Multi-lineage experiments come after one lineage can sustain a readable thought.
+The automatic instrument is deployed on Vercel. v0.14 added clockwork pacing and stable reading. v0.15 supplies extraction addresses and inspection, with an engine-only cost measurement. Next finish **0B clause preparation and source mapping**, accompanied by **0D browser/device measurements**. That unlocks **0C versioned composition**, then optional retrieval and motif memory. Multi-lineage experiments come after one lineage can sustain a readable thought.
 
 Unresolved implementation questions have concrete owners: engineering chooses the source-record format and measures browser costs; source curation resolves ambiguous attribution and distribution metadata; design reviews cadence and the quality rubric. None requires pretending that the whole future is specified. The immediate work is fully actionable.
