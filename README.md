@@ -1,4 +1,4 @@
-# Hyperstition Engine — The Automatic Cathedral (v0.15)
+# Hyperstition Engine — The Automatic Cathedral (v0.16)
 
 A browser-local cyber-occult writing instrument. It starts exploring by itself: a random seed and five simple rules grow branching fiction, select an heir, and feed the result back into the next generation. A visible **AUTO / MANUAL** switch lets you take control at any moment. No LLM or remote inference is involved in generation.
 
@@ -10,11 +10,13 @@ Each automatic tree has at most 85 nodes. The engine retains 12 recent decisions
 
 Replay requires the same seed, corpus version, and source selection/order. Wall-clock times and record IDs vary; decisions and generated fragments reproduce. The ordinary manual Markov and grammar rituals are not seeded replays.
 
-The **CLOCK SPEED** dial spans **0.25×–32×**. At the default **1×**, the circuit charges for 0.8 seconds, reveals each generation for 1.5 seconds, then holds its chosen heir for eight seconds: roughly 12–15 seconds per epoch, plus computation. Change the dial with a pointer or arrow keys; SLOW, HUMAN and OVERDRIVE are quick presets. **PAUSE CLOCK** retains the unfinished beat. Changing speed or holding the clock never changes the seeded decisions. Restarting a seed releases pause and retains the selected speed.
+The **CLOCK SPEED** dial spans **0.25×–32×**. At the default **1×**, the circuit charges for 0.8 seconds, reveals each generation for 1.5 seconds, then holds its chosen heir for **8–18 seconds**, scaled to its word count. Change the dial with a pointer or arrow keys; SLOW, HUMAN and OVERDRIVE are quick presets. **PAUSE CLOCK** retains the unfinished beat. Changing speed or holding the clock never changes the seeded decisions. Restarting a seed releases pause and retains the selected speed.
 
 Select a graph node or choose **PIN TO READ** to hold a specimen while growth continues. **FOLLOW LIVE** returns to the moving lineage; CANONIZE preserves the inspected fragment with its original epoch and source trace. The map reserves node positions before growth, and reading panels hold their size as content changes. The chronicle initially mounts 12 fossils; **EXHUME 12 OLDER EPOCHS** reveals more without reducing export or retention. Automatic mode presents the archive directly; switch to Manual for replay and possession controls.
 
 ## Run
+
+**v0.16 / Continuity:** the automatic composer carries a recurring image through three passages: an inherited sentence, an intact source span and an authored transformation. An indexed lexical shortlist and seeded probability draw select the source. The gold spectrum shows the actual conditional probabilities, surprisal and entropy. Larger fixed reading windows and word-count-based pauses give the passage room. Manual mode exposes both the new composer and the preserved word-splice baseline; old chronicles recall their original composer. See [the comparison, mathematics and limitations](docs/CONTINUITY.md).
 
 **v0.15 / Source memory:** EXAMINE THE GRAFT now pins the live specimen and shows the recorded extraction with its borrowed span highlighted. PUNCTUATION UNITS exposes conservative boundaries for inspecting where the current word window cuts a thought. New tree, chronicle and transmission exports retain the source address and extraction. Older archives remain readable. Source labels do not establish the speaker or exact work inside a mixed collection. See [source evidence and measurements](docs/SOURCE_EVIDENCE.md).
 
@@ -83,7 +85,7 @@ See [AUTOPOIESIS.md](docs/AUTOPOIESIS.md) for selection formulas, entropy costs,
 - [Roadmap](docs/ROADMAP.md): source fidelity, semantic retrieval, motif memory, interacting lineages, and performance gates.
 - [Project agent guidance](AGENTS.md) and [evolution log](docs/EVOLUTION_LOG.md): evidence-based changes to this repository's working practices.
 
-The semantic encoder and advanced NLP work are planned, not shipped. Current novelty and echo scores measure vocabulary overlap; they do not measure meaning or profundity.
+The new composer uses sentence heuristics, an inverted lexical index, inverse-document-frequency overlap and temperature-controlled sampling. No semantic encoder is shipped. Novelty, echo and lexical fit measure vocabulary overlap; probability statistics describe the sampled shortlist. None measures meaning or profundity.
 
 ## Vercel deployment
 

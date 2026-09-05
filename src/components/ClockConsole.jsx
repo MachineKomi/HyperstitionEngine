@@ -84,8 +84,7 @@ export default function ClockConsole() {
         </span>
       </div>
       <p className="clock-help">
-        1× gives each heir eight seconds to speak. Speed changes time, never the
-        seed.
+        1× holds each heir for 8–18 seconds. Speed changes time, never the seed.
       </p>
     </div>
   );

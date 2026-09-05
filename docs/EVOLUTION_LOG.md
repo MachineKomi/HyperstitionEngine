@@ -42,6 +42,18 @@ This records changes to project practice. It does not record changes to a model'
 
 **Next test.** Compare a versioned intact-unit composer with the preserved baseline. Treat reference/OCR flags as review cues until classification has been evaluated; unusual form can be intentional.
 
+## 2026-09-05 · Preserve the thought, expose the draw
+
+**Evidence.** The paired 30-seed experiment in [Continuity](CONTINUITY.md) compares the preserved word-splice composer with a new intact-span composer. An early lexical scorer favored the broken transcript “This is, I think, is what.” because its few content terms overlapped strongly. Boundary checks alone did not establish sentence completeness. The final sample still includes a relative-clause fragment, undefined mathematical notation and repeated source sentences.
+
+**Experiment and interpretation.** Add conservative content/disfluency filters, inherit a literal sentence and named motif, then use an indexed shortlist and seeded temperature draw. Eight authored structures give recurrence, measurement and limits room to interact with an intact source. This applies the existing Land reading's interest in surviving relations and changed conditions; it does not confer authority on generated text. The observed source repetitions remain evidence against treating lexical fit as literary success.
+
+**Guidance changed.** AGENTS.md explicitly versions candidate filters and sampling as well as composition. Old archives must retain their old composer or report an unsupported version. The legacy 30-seed digest remains unchanged. Probability, surprisal and entropy are displayed under their literal definitions, conditional on the sampled shortlist.
+
+**Verification and limits.** The 38-test suite covers exact spans, motifs, probability identities, imported replay metadata, interrupted indexing and 30-epoch resume, alongside existing bounds. Index preparation yields every 256 records and publishes no partial cache after cancellation. Browser emulation checks fixed reading heights and pin stability from 320–1920px and landscape. The longer passages exposed an undersized reading window; it now reserves more space, with internal scrolling for long text. The report separates warm computation from first-use preparation and records both successful and weak passages. No reader study, semantic model or measured profundity gain is claimed.
+
+**Next experiment.** Compare a bounded repetition ledger and source-diversity pressure with this frozen composer. Evaluate whether recurring images develop across multiple epochs rather than merely appearing in authored endings. Optional encoder work still needs quality and device-cost evidence.
+
 ## Amendment record format
 
 For future entries, record:

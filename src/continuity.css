@@ -1,0 +1,108 @@
+.specimen-text p + p {
+  margin-top: 1.15em;
+}
+.automatic-mode .specimen-text {
+  height: 560px;
+}
+.automatic-mode .feedback-button,
+.automatic-mode .specimen-actions button:nth-child(2) {
+  display: none;
+}
+.composition-measure {
+  border-top: 1px solid #655239;
+  border-bottom: 1px solid #655239;
+  background: linear-gradient(125deg, #27201666, #161218);
+  padding: 12px 0;
+  height: 142px;
+}
+.probability-spectrum {
+  display: block;
+  height: 28px;
+  width: calc(100% - 16px);
+  margin: 10px 8px 0;
+  border-bottom: 1px solid #69593e;
+}
+.probability-spectrum rect {
+  fill: #866e9355;
+}
+.probability-spectrum rect.drawn {
+  fill: #e1b873;
+}
+.motif-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding-inline: 8px;
+  color: #ae9670;
+  font-size: 8px;
+  line-height: 1.6;
+}
+.motif-heading b {
+  font-family: Georgia, serif;
+  font-size: 17px;
+  color: #e4c998;
+  font-style: italic;
+  font-weight: normal;
+}
+.measure-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 10px;
+}
+.measure-grid > div {
+  padding-inline: 8px;
+  border-right: 1px solid #68533955;
+}
+.measure-grid > div:last-child {
+  border: 0;
+}
+.measure-grid span {
+  display: block;
+  color: #ae9670;
+  font-size: 8px;
+  white-space: nowrap;
+}
+.measure-grid strong {
+  display: block;
+  margin-top: 5px;
+  color: #e6cfac;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+.measure-grid small {
+  font-size: 8px;
+  color: #ad9879;
+}
+.probability-note {
+  color: #c9b184;
+  line-height: 1.8;
+  border-left: 2px solid #846338;
+  padding-left: 10px;
+}
+#composer {
+  margin-bottom: 16px;
+}
+@media (max-width: 600px) {
+  .automatic-mode .specimen-text {
+    height: 620px;
+  }
+  .specimen-text p {
+    font-size: 20px;
+    line-height: 1.65;
+  }
+  .measure-grid strong {
+    font-size: 14px;
+  }
+  .measure-grid > div {
+    padding-inline: 5px;
+  }
+  .measure-grid span {
+    font-size: 7px;
+  }
+  .motif-heading {
+    padding-inline: 5px;
+    font-size: 7px;
+  }
+}

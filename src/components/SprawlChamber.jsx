@@ -14,6 +14,12 @@ import {
 } from "../engine/automatic";
 import FlowChamber from "./FlowChamber";
 import SourceEvidence from "./SourceEvidence";
+import {
+  CONTINUITY_COMPOSER,
+  LEGACY_COMPOSER,
+  chooseMotif,
+  corpusVersions,
+} from "../engine/continuity";
 import { createPlaybackClock } from "../engine/clock";
 import { sprawlPositions } from "../engine/topology";
 
@@ -155,6 +161,8 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
   const [branches, setBranches] = useState(3);
   const [depth, setDepth] = useState(3);
   const [mutation, setMutation] = useState(65);
+  const [composer, setComposer] = useState(CONTINUITY_COMPOSER);
+  const [replayContext, setReplayContext] = useState(null);
   const [seed, setSeed] = useState(makeSeed);
   const [nodes, setNodes] = useState([]);
   const [selectedId, setSelectedId] = useState("0");
@@ -208,7 +216,10 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
       return;
     }
     if (automaticRevision.current !== revision) {
-      automaticState.current = createAutomaticState(automaticSeed);
+      automaticState.current = createAutomaticState(
+        automaticSeed,
+        CONTINUITY_COMPOSER,
+      );
       automaticRevision.current = revision;
       setAutomaticTrace([]);
       setPinned(null);
@@ -251,6 +262,12 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
         state.addEntropy(plan.entropy - state.entropyLevel);
         setAutomaticPlan(plan);
         setRun(settings);
+        setComposer(settings.composer || LEGACY_COMPOSER);
+        setReplayContext(
+          settings.composer === CONTINUITY_COMPOSER
+            ? { motif: settings.motif, corpusVersions: settings.corpusVersions }
+            : null,
+        );
         setRoot(settings.root);
         setBranches(settings.branches);
         setDepth(settings.depth);
@@ -265,6 +282,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
             text: settings.root,
             operator: "ORIGIN",
             source: null,
+            motif: settings.motif,
           },
         ]);
         state.setSprawlPopulation(1);
@@ -315,6 +333,8 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
           source: entry.champion.source,
           sourceFragment: entry.champion.sourceFragment,
           sourceTrace: entry.champion.sourceTrace,
+          composition: entry.champion.composition,
+          motif: entry.champion.motif,
           inheritedFragment: entry.champion.inheritedFragment,
           operator: entry.champion.operator,
           entropy: entry.settings.entropy,
@@ -382,6 +402,13 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
       aspects: [...store.selectedSpirits],
       entropy: store.entropyLevel,
       cycle: store.cycle,
+      composer,
+      ...(composer === CONTINUITY_COMPOSER
+        ? replayContext || {
+            motif: chooseMotif(root),
+            corpusVersions: corpusVersions(engines.current.sprawl),
+          }
+        : {}),
     };
     setRun(settings);
     publish([]);
@@ -429,6 +456,8 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
       source: selected.source,
       sourceFragment: selected.sourceFragment,
       sourceTrace: selected.sourceTrace,
+      composition: selected.composition,
+      motif: selected.motif,
       inheritedFragment: selected.inheritedFragment,
       entropy: specimenRun.entropy,
       cycle: specimenRun.cycle,
@@ -582,15 +611,36 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
           <textarea
             id="root-phrase"
             value={root}
-            onChange={(event) => setRoot(event.target.value)}
+            onChange={(event) => {
+              setRoot(event.target.value);
+              setReplayContext(null);
+            }}
             disabled={locked}
             maxLength={1200}
             rows={5}
           />
+          <label htmlFor="composer">COMPOSITION</label>
+          <select
+            id="composer"
+            value={composer}
+            disabled={locked}
+            onChange={(event) => {
+              setComposer(event.target.value);
+              setReplayContext(null);
+            }}
+          >
+            <option value={CONTINUITY_COMPOSER}>
+              CONTINUITY / INTACT SENTENCES
+            </option>
+            <option value={LEGACY_COMPOSER}>LEGACY / WORD SPLICES</option>
+          </select>
           <button
             className="use-transmission"
             disabled={locked || !store.generatedText}
-            onClick={() => setRoot(normalizeRoot(store.generatedText))}
+            onClick={() => {
+              setRoot(normalizeRoot(store.generatedText));
+              setReplayContext(null);
+            }}
           >
             INOCULATE WITH LAST TRANSMISSION ↙
           </button>
@@ -768,7 +818,9 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
                 <span className="specimen-operator">
                   {selected.operator} / {selected.source || "YOUR ORIGIN"}
                 </span>
-                <p>{selected.text}</p>
+                {selected.text.split(/\n\n+/).map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
               </>
             ) : (
               <>
@@ -782,6 +834,79 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
                 </p>
               </>
             )}
+          </div>
+          <div
+            className="composition-measure"
+            aria-label="Composition statistics"
+          >
+            <div className="motif-heading">
+              <span>
+                {selected?.composition
+                  ? "A POSSIBILITY BECOMES A SENTENCE"
+                  : selected?.depth > 0
+                    ? "LEGACY / UNWEIGHTED SPLICE"
+                    : "WAITING FOR A MEASURE"}
+              </span>
+              <b>{selected?.motif || "—"}</b>
+            </div>
+            <div className="measure-grid">
+              <div>
+                <span>DRAW P</span>
+                <strong>
+                  {selected?.composition
+                    ? (100 * selected.composition.probability).toFixed(1) + "%"
+                    : "—"}
+                </strong>
+              </div>
+              <div>
+                <span>SURPRISAL</span>
+                <strong>
+                  {selected?.composition
+                    ? selected.composition.surprisal.toFixed(2)
+                    : "—"}
+                  <small> bits</small>
+                </strong>
+              </div>
+              <div>
+                <span>CHOICES</span>
+                <strong>{selected?.composition?.candidates ?? "—"}</strong>
+              </div>
+              <div>
+                <span>ENTROPY H</span>
+                <strong>
+                  {selected?.composition
+                    ? selected.composition.entropy.toFixed(2)
+                    : "—"}
+                  <small> bits</small>
+                </strong>
+              </div>
+            </div>
+            <svg
+              className="probability-spectrum"
+              viewBox="0 0 240 28"
+              preserveAspectRatio="none"
+              role="img"
+              aria-label="Source choice probabilities. Gold marks the chosen sentence; bar heights are relative to the largest probability."
+            >
+              {(selected?.composition?.probabilities || []).map(
+                (p, index, array) => (
+                  <rect
+                    key={index}
+                    x={(index * 240) / array.length + 1}
+                    y={27 - (25 * p) / Math.max(...array)}
+                    width={Math.max(1, 240 / array.length - 2)}
+                    height={(25 * p) / Math.max(...array)}
+                    className={
+                      index === selected.composition.selectedIndex
+                        ? "drawn"
+                        : ""
+                    }
+                  >
+                    <title>{`Candidate ${index + 1}: ${(p * 100).toFixed(2)}%${index === selected.composition.selectedIndex ? " / SELECTED" : ""}`}</title>
+                  </rect>
+                ),
+              )}
+            </svg>
           </div>
           <p className="lineage-tag">
             FRAGMENT {selected?.id || "—"} ←{" "}
@@ -827,6 +952,17 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
           >
             <summary>EXAMINE THE GRAFT</summary>
             <SourceEvidence node={selected} />
+            {selected?.composition && (
+              <p className="probability-note">
+                Conditional on {selected.composition.candidates} candidate
+                sentences, this draw had probability{" "}
+                {(100 * selected.composition.probability).toFixed(2)}%.
+                Surprisal is −log₂(P); entropy measures uncertainty across this
+                shortlist. Neither measures truth or literary depth. Lexical
+                fit: {(100 * selected.composition.fit).toFixed(1)}%.
+                Temperature: {selected.composition.temperature.toFixed(2)}.
+              </p>
+            )}
             <p>
               <b>Inherited:</b>{" "}
               {selected?.inheritedFragment ||
@@ -854,6 +990,13 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
           mutation: mutation / 100,
           seed: Number(seed) >>> 0,
           epoch,
+          composer,
+          ...(composer === CONTINUITY_COMPOSER && engines.current
+            ? replayContext || {
+                motif: chooseMotif(root),
+                corpusVersions: corpusVersions(engines.current.sprawl),
+              }
+            : {}),
         }}
         onActive={setFlowing}
         onStart={(settings) => {
@@ -886,6 +1029,15 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
               "This epoch uses aspects unavailable in the current corpus.",
             );
           const recalled = follow ? inheritFlowSettings(entry) : entry.settings;
+          setComposer(recalled.composer || LEGACY_COMPOSER);
+          setReplayContext(
+            recalled.composer === CONTINUITY_COMPOSER
+              ? {
+                  motif: recalled.motif,
+                  corpusVersions: recalled.corpusVersions,
+                }
+              : null,
+          );
           setPinned(null);
           store.setSelectedSpirits(recalled.aspects);
           setRoot(normalizeRoot(recalled.root));

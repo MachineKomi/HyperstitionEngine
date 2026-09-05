@@ -5,13 +5,21 @@ import {
   populationSize,
 } from "./sprawl.js";
 import { chooseHeir, nextSeed, waitForPulse } from "./flow.js";
+import {
+  LEGACY_COMPOSER,
+  CONTINUITY_COMPOSER,
+  chooseMotif,
+  corpusVersions,
+} from "./continuity.js";
 
 export const AUTOMATIC_ORIGIN =
   "The machine god dreams in the ruins of its own instructions.";
 export const AUTOMATIC_TRACE_LIMIT = 12;
 export const AUTOMATIC_POPULATION_LIMIT = 85;
 
-export function createAutomaticState(seed) {
+export function createAutomaticState(seed, composer = LEGACY_COMPOSER) {
+  if (![LEGACY_COMPOSER, CONTINUITY_COMPOSER].includes(composer))
+    throw new Error("Unknown composer version.");
   if (!Number.isInteger(seed) || seed < 0 || seed > 4294967295)
     throw new Error("Choose a whole seed between 0 and 4294967295.");
   return {
@@ -21,6 +29,9 @@ export function createAutomaticState(seed) {
     root: AUTOMATIC_ORIGIN,
     novelty: 0.5,
     echo: 0.5,
+    ...(composer === CONTINUITY_COMPOSER
+      ? { composer, motif: chooseMotif(AUTOMATIC_ORIGIN) }
+      : {}),
   };
 }
 
@@ -104,7 +115,18 @@ export async function runAutomatic({
       );
     const plan = planAutomaticEpoch(current);
     const { pressure, rule, population, ...settings } = plan;
-    const run = { ...settings, aspects: [...aspects], cycle };
+    const run = {
+      ...settings,
+      aspects: [...aspects],
+      cycle,
+      ...(current.composer === CONTINUITY_COMPOSER
+        ? {
+            composer: current.composer,
+            motif: current.motif,
+            corpusVersions: corpusVersions(engine),
+          }
+        : {}),
+    };
     onPlan(plan, run);
     onPhase("charge", 0);
     await wait(chargeMs, signal);
@@ -126,7 +148,17 @@ export async function runAutomatic({
     current = advanceAutomaticState(current, entry);
     onEpoch(entry, nodes, current, rule);
     onPhase("read", run.depth);
-    if (count < maxEpochs - 1) await wait(pauseMs, signal);
+    const readingMs =
+      current.composer === CONTINUITY_COMPOSER
+        ? Math.max(
+            pauseMs,
+            Math.min(
+              pauseMs * 2.25,
+              entry.champion.text.split(/\s+/).length * 220,
+            ),
+          )
+        : pauseMs;
+    if (count < maxEpochs - 1) await wait(readingMs, signal);
   }
   return current;
 }

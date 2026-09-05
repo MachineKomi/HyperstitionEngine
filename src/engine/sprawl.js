@@ -1,5 +1,12 @@
 import { waitForPulse } from "./clock.js";
 import { windowSpan, sourceAddress } from "./sourceSpans.js";
+import {
+  ContinuityComposer,
+  CONTINUITY_COMPOSER,
+  LEGACY_COMPOSER,
+  chooseMotif,
+  corpusVersions,
+} from "./continuity.js";
 // Original procedural writing rules: source fragments are recombined, never LLM-generated.
 export function randomStream(seed) {
   let state = seed >>> 0;
@@ -70,6 +77,10 @@ const rites = [
 
 export class SprawlEngine {
   loadCorpus(spirits) {
+    this.boundVersions = Object.fromEntries(
+      spirits.map((source) => [source.id, source.sourceVersion || null]),
+    );
+    this.continuity = null;
     this.sources = spirits
       .map((spirit) => {
         const records = (spirit.sentences || [])
@@ -95,7 +106,20 @@ export class SprawlEngine {
       throw new Error("No usable fragments in these aspects.");
   }
 
-  mutate(parent, rng, mutation) {
+  async prepareComposer(signal) {
+    if (this.continuity) return;
+    const sources = this.sources;
+    const prepared = await ContinuityComposer.prepare(sources, signal);
+    if (signal?.aborted || sources !== this.sources)
+      throw new DOMException("Sprawl interrupted.", "AbortError");
+    this.continuity = prepared;
+  }
+
+  mutate(parent, rng, mutation, composer = LEGACY_COMPOSER) {
+    if (composer === CONTINUITY_COMPOSER) {
+      this.continuity ||= new ContinuityComposer(this.sources);
+      return this.continuity.mutate(parent, rng, mutation);
+    }
     const source = this.sources[Math.floor(rng() * this.sources.length)];
     const record = source.records[Math.floor(rng() * source.records.length)];
     const inherited = fragment(
@@ -138,11 +162,26 @@ export async function growSprawl({
   depth,
   seed,
   mutation,
+  composer = LEGACY_COMPOSER,
+  motif,
+  corpusVersions: versions,
   signal,
   onLayer = () => {},
   layerPauseMs = 100,
   wait = waitForPulse,
 }) {
+  if (![LEGACY_COMPOSER, CONTINUITY_COMPOSER].includes(composer))
+    throw new Error("Unknown composer version.");
+  if (versions) {
+    const actual = corpusVersions(engine);
+    if (
+      Object.keys(actual).length !== Object.keys(versions).length ||
+      Object.keys(versions).some((id) => actual[id] !== versions[id])
+    )
+      throw new Error(
+        "The bound corpus differs from this replay. Restore its sources or choose a composer again to start a new path.",
+      );
+  }
   if (
     ![2, 3, 4].includes(branches) ||
     !Number.isInteger(depth) ||
@@ -153,6 +192,7 @@ export async function growSprawl({
   if (!Number.isFinite(mutation) || mutation < 0 || mutation > 1)
     throw new Error("Mutation must be between zero and one.");
   if (!root.trim()) throw new Error("Give the machine a seed phrase.");
+  if (composer === CONTINUITY_COMPOSER) await engine.prepareComposer(signal);
   const rng = randomStream(seed);
   const nodes = [
     {
@@ -162,6 +202,9 @@ export async function growSprawl({
       text: normalizeRoot(root),
       operator: "ORIGIN",
       source: null,
+      ...(composer === CONTINUITY_COMPOSER
+        ? { motif: motif || chooseMotif(root) }
+        : {}),
     },
   ];
   let frontier = [nodes[0]];
@@ -175,7 +218,7 @@ export async function growSprawl({
           id: String(nodes.length + next.length),
           parentId: parent.id,
           depth: generation,
-          ...engine.mutate(parent, rng, mutation),
+          ...engine.mutate(parent, rng, mutation, composer),
         });
       }
     }

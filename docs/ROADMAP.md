@@ -59,6 +59,8 @@ The current plan does not include training a foundation model, autonomous networ
 
 ### 0C. Preserve a clause before finding a stranger one
 
+**v0.16 checkpoint:** `continuity-1` is the automatic default, with intact source spans, a persistent motif, eight authored structures, bounded lexical retrieval and probability inspection. `splice-1` remains available for old replay. The [30-seed comparison](CONTINUITY.md) includes failures and source repetition; the heuristics do not establish grammatical roles or semantic understanding.
+
 **Reader need:** follow a thought while it changes.
 
 **Deliverable:** a composition adapter that selects complete short clauses or sentence units. Operators specify allowed grammatical roles and return provenance for every inserted span. Start with a small, authored set of robust structures. Preserve a named object or relation from the parent; reject candidates ending in dangling conjunctions or broken extraction references.
@@ -81,6 +83,8 @@ The current plan does not include training a foundation model, autonomous networ
 
 ### 1A. Hybrid retrieval, optional local encoder
 
+**v0.16 checkpoint:** the no-model shortlist ships with at most 24 candidates per child and interruptible index preparation. Encoder reranking, hardware benchmarking and a reader preference evaluation remain open.
+
 First form a bounded lexical shortlist from selected-source shards. Use exact IDs and stable ordering. Compare a no-model scorer with an optional sentence encoder that reranks candidate clauses for continuity with the parent and a small motif memory. Encode reusable source clauses once per model/corpus version; batch dynamic queries. The [research notes](research/LAND_READING_2026-09-05.md#modern-nlp-a-bounded-experiment) document primary sources and candidate models.
 
 **Acceptance:** pin model/runtime revisions, tokenizer, pooling and normalization; identify download size and license; run inference away from the main thread; cap cache bytes; show loading and fallback state. No generation stalls while the optional model is unavailable. Compare warm quality and latency with the no-model baseline. Record selected source IDs so a replay need not depend on identical floating-point ranking across different hardware backends.
@@ -100,6 +104,8 @@ Maintain a finite ledger of objects, conflicts and unrealized images. Each motif
 **Acceptance:** a recurrence has a trace to its earlier appearance; a motif can expire; memory cannot grow without limit; interruption and replay preserve the same motif state. Show recurrence through a restrained visual echo rather than replaying an entire transcript.
 
 ### 1D. Cadence and material form
+
+**v0.16 checkpoint:** three separate passages, a fixed probability spectrum, larger reading windows and an 8–18 second default reading beat complement the existing clock and pin. Multi-epoch motif diversity and reader studies remain open.
 
 Add operators for slow accumulation, sudden cut, echo, disagreement and scale change. Build a quiet reading mode with stable text, adjustable pace and a condensed genealogy. Animate edges when relationships change. Preserve purposeful line breaks from eligible sources. Let reduced-motion mode use static state changes.
 

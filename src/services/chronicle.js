@@ -1,4 +1,9 @@
 import { normalizeSpan, sourceAddress } from "../engine/sourceSpans.js";
+import {
+  CONTINUITY_COMPOSER,
+  LEGACY_COMPOSER,
+  SHORTLIST_LIMIT,
+} from "../engine/continuity.js";
 export const CHRONICLE_LIMIT = 108;
 export const CHRONICLE_FILE_LIMIT = 16 * 1024 * 1024;
 export const CHRONICLE_KEY = "hyperstition.chronicle.v1";
@@ -77,6 +82,92 @@ export function validateChronicle(data) {
         "The chronicle contains an invalid epoch. Your current history was kept.",
       );
     ids.add(entry.id);
+    let composerSettings = {},
+      compositionFields = {};
+    if (s.composer !== undefined) {
+      if (![CONTINUITY_COMPOSER, LEGACY_COMPOSER].includes(s.composer))
+        throw new Error("Unsupported composer version in this chronicle.");
+      composerSettings = { composer: s.composer };
+      if (s.composer === LEGACY_COMPOSER && c.composition !== undefined)
+        throw new Error(
+          "Composition statistics do not belong to this replay version.",
+        );
+      if (s.composer === CONTINUITY_COMPOSER) {
+        const m = c.composition;
+        const versions = s.corpusVersions;
+        if (
+          !text(s.motif, 30) ||
+          !/^[a-z]{3,30}$/.test(s.motif) ||
+          c.motif !== s.motif ||
+          !versions ||
+          typeof versions !== "object" ||
+          Array.isArray(versions) ||
+          Object.keys(versions).length !== s.aspects.length ||
+          s.aspects.some(
+            (id) =>
+              !(
+                versions[id] === null ||
+                (typeof versions[id] === "string" &&
+                  /^[a-f0-9]{64}$/.test(versions[id]))
+              ),
+          ) ||
+          !text(c.carry, 500) ||
+          !c.text.includes(c.carry) ||
+          !c.carry.includes(c.motif) ||
+          !m ||
+          m.version !== CONTINUITY_COMPOSER ||
+          !Number.isInteger(m.candidates) ||
+          !number(m.candidates, 1, SHORTLIST_LIMIT) ||
+          !Array.isArray(m.probabilities) ||
+          m.probabilities.length !== m.candidates ||
+          m.probabilities.some((p) => !number(p, Number.MIN_VALUE, 1)) ||
+          Math.abs(m.probabilities.reduce((a, b) => a + b, 0) - 1) > 1e-8 ||
+          !Number.isInteger(m.selectedIndex) ||
+          !number(m.selectedIndex, 0, m.candidates - 1) ||
+          Math.abs(m.probabilities[m.selectedIndex] - m.probability) > 1e-8 ||
+          Math.abs(
+            m.entropy +
+              m.probabilities.reduce((sum, p) => sum + p * Math.log2(p), 0),
+          ) > 1e-8 ||
+          !number(m.probability, Number.MIN_VALUE, 1) ||
+          !number(m.surprisal, 0, 64) ||
+          Math.abs(m.surprisal + Math.log2(m.probability)) > 1e-8 ||
+          !number(m.entropy, 0, Math.log2(m.candidates) + 1e-8) ||
+          !number(m.fit, 0, 1) ||
+          !number(m.temperature, 0.18, 0.78 + 1e-8) ||
+          Math.abs(m.temperature - (0.18 + s.mutation * 0.6)) > 1e-8 ||
+          !c.sourceTrace ||
+          c.sourceTrace.version !== versions[c.source]
+        ) {
+          throw new Error(
+            "The chronicle contains invalid continuity settings or statistics.",
+          );
+        }
+        composerSettings = {
+          composer: s.composer,
+          motif: s.motif,
+          corpusVersions: Object.fromEntries(
+            s.aspects.map((id) => [id, versions[id]]),
+          ),
+        };
+        compositionFields = {
+          motif: c.motif,
+          carry: c.carry,
+          composition: {
+            version: m.version,
+            candidates: m.candidates,
+            probability: m.probability,
+            probabilities: [...m.probabilities],
+            selectedIndex: m.selectedIndex,
+            surprisal: m.surprisal,
+            entropy: m.entropy,
+            fit: m.fit,
+            temperature: m.temperature,
+          },
+        };
+      }
+    } else if (c.composition !== undefined)
+      throw new Error("A composed fragment must name its replay version.");
     let sourceTrace;
     if (c.sourceTrace !== undefined) {
       const t = c.sourceTrace;
@@ -125,6 +216,7 @@ export function validateChronicle(data) {
         entropy: s.entropy,
         cycle: s.cycle,
         aspects: [...s.aspects],
+        ...composerSettings,
       },
       champion: {
         id: c.id,
@@ -139,6 +231,7 @@ export function validateChronicle(data) {
         echo: c.echo,
         score: c.score,
         ...(sourceTrace ? { sourceTrace } : {}),
+        ...compositionFields,
       },
     };
   });
