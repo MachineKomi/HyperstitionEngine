@@ -59,6 +59,8 @@ The current plan does not include training a foundation model, autonomous networ
 
 ### 0C. Preserve a clause before finding a stranger one
 
+**v0.18 checkpoint:** Continuity III adds four context cues to the memory composer and becomes the automatic default. The [audit](CONTEXT_SCREEN.md) records 11 exclusions, three corrected false positives, 900 winning heirs per composer and remaining source imbalance. This is a narrow heuristic screen; held-out reader judgments, broader curation and semantic retrieval remain open.
+
 **v0.16 checkpoint:** `continuity-1` is the automatic default, with intact source spans, a persistent motif, eight authored structures, bounded lexical retrieval and probability inspection. `splice-1` remains available for old replay. The [30-seed comparison](CONTINUITY.md) includes failures and source repetition; the heuristics do not establish grammatical roles or semantic understanding.
 
 **Reader need:** follow a thought while it changes.

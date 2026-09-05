@@ -5,14 +5,16 @@ import {
   sourceAddress,
 } from "./sourceSpans.js";
 import { waitForPulse } from "./clock.js";
-import { MEMORY_COMPOSER, remember } from "./memory.js";
+import { MEMORY_COMPOSER, remember, usesLineageMemory } from "./memory.js";
+import { CONTEXT_COMPOSER, contextCues } from "./context.js";
+export { CONTEXT_COMPOSER } from "./context.js";
 export { MEMORY_COMPOSER } from "./memory.js";
 
 export const LEGACY_COMPOSER = "splice-1";
 export const CONTINUITY_COMPOSER = "continuity-1";
 export const SHORTLIST_LIMIT = 24;
 export const isContinuityComposer = (version) =>
-  [CONTINUITY_COMPOSER, MEMORY_COMPOSER].includes(version);
+  [CONTINUITY_COMPOSER, MEMORY_COMPOSER, CONTEXT_COMPOSER].includes(version);
 const stop = new Set(
   "the a an and or but of to in on for by with as at from is are was were be been being it its this that these those not no all one their they them we our you your he his she her which who what when where how than then there have has had can could would should will shall may might must do does did into through upon between also only own more most very such some any each every both same other new so if because while".split(
     " ",
@@ -198,7 +200,8 @@ export function corpusVersions(engine) {
 }
 
 export class ContinuityComposer {
-  constructor(sources, defer = false) {
+  constructor(sources, defer = false, version = CONTINUITY_COMPOSER) {
+    this.version = version;
     this.candidates = [];
     this.postings = new Map();
     if (defer) return;
@@ -207,8 +210,8 @@ export class ContinuityComposer {
     this.assertCandidates();
   }
 
-  static async prepare(sources, signal) {
-    const composer = new ContinuityComposer([], true);
+  static async prepare(sources, signal, version = CONTINUITY_COMPOSER) {
+    const composer = new ContinuityComposer([], true, version);
     let batch = 0;
     for (const source of sources)
       for (const record of source.records) {
@@ -225,6 +228,8 @@ export class ContinuityComposer {
   addRecord(source, record) {
     for (const span of sentenceSpans(record.original)) {
       if (!eligibleSentence(span.text)) continue;
+      if (this.version === CONTEXT_COMPOSER && contextCues(span.text).length)
+        continue;
       const candidate = {
         ...span,
         record,
@@ -248,7 +253,7 @@ export class ContinuityComposer {
   }
 
   mutate(parent, rng, mutation, version = CONTINUITY_COMPOSER) {
-    const remembering = version === MEMORY_COMPOSER;
+    const remembering = usesLineageMemory(version);
     const memory = remembering ? parent.memory || [] : [];
     const motif = parent.motif || chooseMotif(parent.text);
     const query = terms(parent.text);

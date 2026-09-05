@@ -72,7 +72,7 @@ export default function LineageMemory({ node, onPin }) {
         {memory
           ? "Select an impression to hold this branch. Recent passages and endings give way to fresh choices."
           : node
-            ? "Ancestral memory belongs to Continuity II. Earlier composers retain their original rules."
+            ? "Ancestral memory belongs to Continuity II and III. Earlier composers retain their original rules."
             : "A new lineage begins with an empty memory. Twelve impressions await their turn."}
       </p>
     </section>

@@ -1,3 +1,5 @@
+import { CONTEXT_COMPOSER, contextCues } from "../src/engine/context.js";
+import { usesLineageMemory } from "../src/engine/memory.js";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { SprawlEngine } from "../src/engine/sprawl.js";
 import { createAutomaticState, runAutomatic } from "../src/engine/automatic.js";
@@ -31,9 +33,13 @@ engine.loadCorpus(
     })),
   ),
 );
+const contextual = process.argv.includes("--context");
+const composers = contextual
+  ? [MEMORY_COMPOSER, CONTEXT_COMPOSER]
+  : [CONTINUITY_COMPOSER, MEMORY_COMPOSER];
 const runs = [];
 for (let seed = 0; seed < 30; seed++)
-  for (const composer of [CONTINUITY_COMPOSER, MEMORY_COMPOSER]) {
+  for (const composer of composers) {
     const entries = [];
     await runAutomatic({
       engine,
@@ -76,7 +82,7 @@ for (let seed = 0; seed < 30; seed++)
     });
   }
 const summary = Object.fromEntries(
-  [CONTINUITY_COMPOSER, MEMORY_COMPOSER].map((composer) => {
+  composers.map((composer) => {
     const selected = runs.filter((r) => r.composer === composer),
       heirs = selected.flatMap((r) => r.heirs);
     return [
@@ -98,10 +104,11 @@ const summary = Object.fromEntries(
         sources: Object.fromEntries(
           ids.map((id) => [id, heirs.filter((h) => h.source === id).length]),
         ),
-        meanAvoided:
-          composer === MEMORY_COMPOSER
-            ? heirs.reduce((sum, h) => sum + h.avoided, 0) / heirs.length
-            : null,
+        meanAvoided: usesLineageMemory(composer)
+          ? heirs.reduce((sum, h) => sum + h.avoided, 0) / heirs.length
+          : null,
+        contextCueMatches: heirs.filter((h) => contextCues(h.fragment).length)
+          .length,
         revisits: heirs.filter((h) => h.revisit).length,
       },
     ];
@@ -109,7 +116,10 @@ const summary = Object.fromEntries(
 );
 await mkdir(new URL("../output", import.meta.url), { recursive: true });
 await writeFile(
-  new URL("../output/memory-comparison.json", import.meta.url),
+  new URL(
+    `../output/${contextual ? "context" : "memory"}-comparison.json`,
+    import.meta.url,
+  ),
   JSON.stringify(
     {
       versions: corpusVersions(engine),

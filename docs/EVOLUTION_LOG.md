@@ -66,6 +66,18 @@ This records changes to project practice. It does not record changes to a model'
 
 **Revisit.** Test whether source-context filtering can remove uninformative transcript fragments without flattening experimental prose. Compare source-diversity pressure separately from repetition control so each effect remains attributable.
 
+## 5 September 2026 · v0.18 · Context before intensity
+
+**Observation.** The previous review identified source sentences that depend on an absent lecture or unnamed referent. A four-cue screen excludes 11 of 3,303 default candidates. In seeds 0–29 across 30 automatic epochs each, winning passages matching these cues fell from 38 to zero. This establishes the targeted exclusion, not an increase in profundity.
+
+**Interpretation and contrary evidence.** The existing Land reading treats recurrence and changes in relations as more useful design material than sheer verbal intensity. A passage should have room to carry an image. Early screening drafts removed a complete Land sentence, a biblical reference with a named referent, and a concrete philosophical image. Narrowing the rules restored all three; the regression suite preserves these counterexamples. The [report](CONTEXT_SCREEN.md) retains uneven source balance and the limits of the development set.
+
+**Change.** `continuity-3` adds the screen before indexing, retains ancestral memory and becomes the automatic default. Older composers retain their own pools. The reader gives inherited text, borrowed prose and authored endings different visual weights; source inspection exposes the current cues. The existing AGENTS.md rules about versioning and contrary evidence already cover this experiment, so no additional project obligation is needed.
+
+**Verification.** 51 tests pass, including frozen legacy/I/II trees, III memory replay and interruption, exact spans, corrected false positives and canceled/rebound indexing. Seven browser sizes from 320 to 1920px, including landscape, show no horizontal overflow. Live panel rectangles remain stable, and inspection pins both text and memory. Browser import/replay and follow-heir checks validate the actual exported state separately.
+
+**Revisit.** Gather held-out reader judgments and source annotations before broadening the filter. Compare source balance as its own experiment. Neither a lack of matched cues nor increased lexical variety proves coherence.
+
 ## Amendment record format
 
 For future entries, record:

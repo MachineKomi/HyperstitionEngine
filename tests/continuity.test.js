@@ -9,6 +9,7 @@ import {
 import {
   ContinuityComposer,
   CONTINUITY_COMPOSER,
+  MEMORY_COMPOSER,
   LEGACY_COMPOSER,
   eligibleSentence,
   sentenceSpans,
@@ -259,5 +260,18 @@ test("index preparation yields, cancels cleanly and preserves synchronous candid
   assert.deepEqual(
     engine.continuity.mutate(parent, randomStream(137), 0.65),
     synchronous.mutate(parent, randomStream(137), 0.65),
+  );
+});
+
+test("continuity-2 retains its frozen 30-seed replay after newer composers arrive", async () => {
+  const engine = fixture(),
+    trees = [];
+  for (let seed = 0; seed < 30; seed++)
+    trees.push(
+      await growSprawl({ ...setup(engine), composer: MEMORY_COMPOSER, seed }),
+    );
+  assert.equal(
+    createHash("sha256").update(JSON.stringify(trees)).digest("hex"),
+    "4c79af4ef665b830f71b8f0a32ee80f4d5acf17a26c70ad59290308a09c0613b",
   );
 });

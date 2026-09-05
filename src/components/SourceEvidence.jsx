@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { extractionFlags, punctuationUnits } from "../engine/sourceSpans";
 import catalog from "../assets/source_catalog.json";
+import { contextCues, CONTEXT_CUE_LABELS } from "../engine/context";
 
 export default function SourceEvidence({ node }) {
   const [view, setView] = useState("context");
@@ -14,6 +15,7 @@ export default function SourceEvidence({ node }) {
     [trace],
   );
   const record = catalog.sources[node?.source];
+  const cues = contextCues(node?.sourceFragment || "");
   if (!trace)
     return (
       <div className="source-evidence source-unaddressed">
@@ -55,6 +57,9 @@ export default function SourceEvidence({ node }) {
         >
           PUNCTUATION UNITS
         </button>
+        <button aria-pressed={view === "cues"} onClick={() => setView("cues")}>
+          PASSAGE CUES
+        </button>
       </div>
       <div
         className="source-context"
@@ -62,7 +67,9 @@ export default function SourceEvidence({ node }) {
         aria-label={
           view === "context"
             ? "Original extraction with graft highlighted"
-            : "Punctuation units from the extraction"
+            : view === "cues"
+              ? "Current passage context cues"
+              : "Punctuation units from the extraction"
         }
       >
         {view === "context" ? (
@@ -71,6 +78,24 @@ export default function SourceEvidence({ node }) {
             <mark>{trace.original.slice(trace.start, trace.end)}</mark>
             {trace.original.slice(trace.end)}
           </p>
+        ) : view === "cues" ? (
+          <div className="passage-cues">
+            <small>CONTEXT SCREEN / CONTINUITY III</small>
+            <p>
+              {cues.length
+                ? cues.map((cue) => CONTEXT_CUE_LABELS[cue]).join(". ") + "."
+                : "No listed context cue matched this passage."}
+            </p>
+            <p>
+              Four narrow English cues check for absent discussions, unnamed
+              referents, undefined notation and relative fragments. They do not
+              establish meaning, grammar or truth.
+            </p>
+            <small>
+              This inspection uses the current screen. Older composers retain
+              their original selection rules.
+            </small>
+          </div>
         ) : (
           <ol>
             {units.slice(0, 24).map((unit) => (

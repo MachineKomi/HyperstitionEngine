@@ -1,7 +1,7 @@
 {
   "name": "hyperstition-engine",
   "private": true,
-  "version": "0.17.0",
+  "version": "0.18.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,7 +13,9 @@
     "preview": "vite preview",
     "test": "node --test",
     "compare:composers": "node scripts/compare-composers.mjs",
-    "compare:memory": "node scripts/compare-memory.mjs"
+    "compare:memory": "node scripts/compare-memory.mjs",
+    "audit:context": "node scripts/audit-context.mjs",
+    "compare:context": "node scripts/compare-memory.mjs --context"
   },
   "dependencies": {
     "markov-strings": "^3.0.1",

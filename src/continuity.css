@@ -84,7 +84,40 @@
 #composer {
   margin-bottom: 16px;
 }
+.specimen-text p.passage-inherited {
+  color: #b8b0a1;
+  font-size: 20px;
+}
+.specimen-text p.passage-ending {
+  color: #e4c998;
+  font-size: 22px;
+  border-left: 1px solid #967447;
+  padding-left: 16px;
+}
+.passage-bridge {
+  display: block;
+  margin-bottom: 10px;
+  font: 10px/1.7 monospace;
+  letter-spacing: 0.06em;
+  color: #b49b77;
+}
+.source-views button {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.passage-cues p {
+  margin-block: 12px;
+}
+.passage-cues small {
+  color: #baa485;
+}
 @media (max-width: 600px) {
+  .specimen-text p.passage-inherited {
+    font-size: 18px;
+  }
+  .specimen-text p.passage-ending {
+    font-size: 20px;
+  }
   .automatic-mode .specimen-text {
     height: 620px;
   }

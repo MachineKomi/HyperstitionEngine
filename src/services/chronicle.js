@@ -1,11 +1,14 @@
 import { normalizeSpan, sourceAddress } from "../engine/sourceSpans.js";
 import {
-  MEMORY_COMPOSER,
   isContinuityComposer,
   LEGACY_COMPOSER,
   SHORTLIST_LIMIT,
 } from "../engine/continuity.js";
-import { MEMORY_LIMIT, validateMemory } from "../engine/memory.js";
+import {
+  MEMORY_LIMIT,
+  validateMemory,
+  usesLineageMemory,
+} from "../engine/memory.js";
 export const CHRONICLE_LIMIT = 108;
 export const CHRONICLE_FILE_LIMIT = 16 * 1024 * 1024;
 export const CHRONICLE_KEY = "hyperstition.chronicle.v1";
@@ -167,7 +170,7 @@ export function validateChronicle(data) {
             temperature: m.temperature,
           },
         };
-        if (s.composer === MEMORY_COMPOSER) {
+        if (usesLineageMemory(s.composer)) {
           const before = validateMemory(s.memory, s.aspects, s.motif);
           const after = validateMemory(c.memory, s.aspects, s.motif);
           const last = after.at(-1);

@@ -16,6 +16,7 @@ import FlowChamber from "./FlowChamber";
 import SourceEvidence from "./SourceEvidence";
 import LineageMemory from "./LineageMemory";
 import {
+  CONTEXT_COMPOSER,
   CONTINUITY_COMPOSER,
   LEGACY_COMPOSER,
   chooseMotif,
@@ -23,7 +24,7 @@ import {
   MEMORY_COMPOSER,
   isContinuityComposer,
 } from "../engine/continuity";
-import { cloneMemory } from "../engine/memory";
+import { cloneMemory, usesLineageMemory } from "../engine/memory";
 import { createPlaybackClock } from "../engine/clock";
 import { sprawlPositions } from "../engine/topology";
 
@@ -34,7 +35,7 @@ const pad = (value) => String(value).padStart(3, "0");
 const contextFor = (settings) => ({
   motif: settings.motif,
   corpusVersions: settings.corpusVersions,
-  ...(settings.composer === MEMORY_COMPOSER
+  ...(usesLineageMemory(settings.composer)
     ? { memory: cloneMemory(settings.memory) }
     : {}),
 });
@@ -172,7 +173,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
   const [branches, setBranches] = useState(3);
   const [depth, setDepth] = useState(3);
   const [mutation, setMutation] = useState(65);
-  const [composer, setComposer] = useState(MEMORY_COMPOSER);
+  const [composer, setComposer] = useState(CONTEXT_COMPOSER);
   const [replayContext, setReplayContext] = useState(null);
   const [seed, setSeed] = useState(makeSeed);
   const [nodes, setNodes] = useState([]);
@@ -239,7 +240,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
     ) {
       automaticState.current = createAutomaticState(
         automaticSeed,
-        MEMORY_COMPOSER,
+        CONTEXT_COMPOSER,
       );
       automaticRevision.current = revision;
       automaticAspects.current = boundAspects;
@@ -303,7 +304,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
             operator: "ORIGIN",
             source: null,
             motif: settings.motif,
-            ...(settings.composer === MEMORY_COMPOSER
+            ...(usesLineageMemory(settings.composer)
               ? { memory: cloneMemory(settings.memory) }
               : {}),
           },
@@ -326,7 +327,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
         setNodes(tree);
         setSelectedId(entry.champion.id);
         setRoot(next.root);
-        if (next.composer === MEMORY_COMPOSER)
+        if (usesLineageMemory(next.composer))
           setReplayContext(
             contextFor({ ...entry.settings, memory: next.memory }),
           );
@@ -443,7 +444,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
         ? replayContext || {
             motif: chooseMotif(root),
             corpusVersions: corpusVersions(engines.current.sprawl),
-            ...(composer === MEMORY_COMPOSER ? { memory: [] } : {}),
+            ...(usesLineageMemory(composer) ? { memory: [] } : {}),
           }
         : {}),
     };
@@ -671,6 +672,9 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
               setReplayContext(null);
             }}
           >
+            <option value={CONTEXT_COMPOSER}>
+              CONTINUITY III / CONTEXT & MEMORY
+            </option>
             <option value={MEMORY_COMPOSER}>
               CONTINUITY II / ANCESTRAL MEMORY
             </option>
@@ -871,7 +875,31 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
                   {selected.operator} / {selected.source || "YOUR ORIGIN"}
                 </span>
                 {selected.text.split(/\n\n+/).map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
+                  <p
+                    key={index}
+                    className={
+                      selected.composition
+                        ? [
+                            "passage-inherited",
+                            "passage-borrowed",
+                            "passage-ending",
+                          ][index]
+                        : undefined
+                    }
+                  >
+                    {selected.composition &&
+                    index === 1 &&
+                    paragraph.endsWith(selected.sourceFragment) ? (
+                      <>
+                        <span className="passage-bridge">
+                          {paragraph.slice(0, -selected.sourceFragment.length)}
+                        </span>
+                        <span>{selected.sourceFragment}</span>
+                      </>
+                    ) : (
+                      paragraph
+                    )}
+                  </p>
                 ))}
               </>
             ) : (
@@ -1013,7 +1041,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
                 shortlist. Neither measures truth or literary depth. Lexical
                 fit: {(100 * selected.composition.fit).toFixed(1)}%.
                 Temperature: {selected.composition.temperature.toFixed(2)}.
-                {selected.composition.version === MEMORY_COMPOSER && (
+                {usesLineageMemory(selected.composition.version) && (
                   <>
                     {" "}
                     {selected.composition.memoryAvoided} recent source choices
@@ -1057,7 +1085,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
             ? replayContext || {
                 motif: chooseMotif(root),
                 corpusVersions: corpusVersions(engines.current.sprawl),
-                ...(composer === MEMORY_COMPOSER ? { memory: [] } : {}),
+                ...(usesLineageMemory(composer) ? { memory: [] } : {}),
               }
             : {}),
         }}

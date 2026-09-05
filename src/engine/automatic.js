@@ -7,12 +7,11 @@ import {
 import { chooseHeir, nextSeed, waitForPulse } from "./flow.js";
 import {
   LEGACY_COMPOSER,
-  MEMORY_COMPOSER,
   isContinuityComposer,
   chooseMotif,
   corpusVersions,
 } from "./continuity.js";
-import { cloneMemory } from "./memory.js";
+import { cloneMemory, usesLineageMemory } from "./memory.js";
 
 export const AUTOMATIC_ORIGIN =
   "The machine god dreams in the ruins of its own instructions.";
@@ -34,7 +33,7 @@ export function createAutomaticState(seed, composer = LEGACY_COMPOSER) {
     ...(isContinuityComposer(composer)
       ? { composer, motif: chooseMotif(AUTOMATIC_ORIGIN) }
       : {}),
-    ...(composer === MEMORY_COMPOSER ? { memory: [] } : {}),
+    ...(usesLineageMemory(composer) ? { memory: [] } : {}),
   };
 }
 
@@ -88,7 +87,7 @@ export function advanceAutomaticState(state, entry) {
     seed: nextSeed(entry.champion.text, entry.settings.seed),
     novelty: entry.champion.novelty,
     echo: entry.champion.echo,
-    ...(state.composer === MEMORY_COMPOSER
+    ...(usesLineageMemory(state.composer)
       ? { memory: cloneMemory(entry.champion.memory) }
       : {}),
   };
@@ -132,7 +131,7 @@ export async function runAutomatic({
             corpusVersions: corpusVersions(engine),
           }
         : {}),
-      ...(current.composer === MEMORY_COMPOSER
+      ...(usesLineageMemory(current.composer)
         ? { memory: cloneMemory(current.memory) }
         : {}),
     };

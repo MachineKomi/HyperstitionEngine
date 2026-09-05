@@ -5,10 +5,11 @@ import {
   LEGACY_COMPOSER,
   chooseMotif,
   corpusVersions,
-  MEMORY_COMPOSER,
+  CONTEXT_COMPOSER,
+  CONTINUITY_COMPOSER,
   isContinuityComposer,
 } from "./continuity.js";
-import { validateMemory } from "./memory.js";
+import { validateMemory, usesLineageMemory } from "./memory.js";
 // Original procedural writing rules: source fragments are recombined, never LLM-generated.
 export function randomStream(seed) {
   let state = seed >>> 0;
@@ -83,6 +84,7 @@ export class SprawlEngine {
       spirits.map((source) => [source.id, source.sourceVersion || null]),
     );
     this.continuity = null;
+    this.contextual = null;
     this.sources = spirits
       .map((spirit) => {
         const records = (spirit.sentences || [])
@@ -108,19 +110,25 @@ export class SprawlEngine {
       throw new Error("No usable fragments in these aspects.");
   }
 
-  async prepareComposer(signal) {
-    if (this.continuity) return;
+  async prepareComposer(signal, composer = CONTINUITY_COMPOSER) {
+    const key = composer === CONTEXT_COMPOSER ? "contextual" : "continuity";
+    if (this[key]) return;
     const sources = this.sources;
-    const prepared = await ContinuityComposer.prepare(sources, signal);
+    const prepared = await ContinuityComposer.prepare(
+      sources,
+      signal,
+      composer,
+    );
     if (signal?.aborted || sources !== this.sources)
       throw new DOMException("Sprawl interrupted.", "AbortError");
-    this.continuity = prepared;
+    this[key] = prepared;
   }
 
   mutate(parent, rng, mutation, composer = LEGACY_COMPOSER) {
     if (isContinuityComposer(composer)) {
-      this.continuity ||= new ContinuityComposer(this.sources);
-      return this.continuity.mutate(parent, rng, mutation, composer);
+      const key = composer === CONTEXT_COMPOSER ? "contextual" : "continuity";
+      this[key] ||= new ContinuityComposer(this.sources, false, composer);
+      return this[key].mutate(parent, rng, mutation, composer);
     }
     const source = this.sources[Math.floor(rng() * this.sources.length)];
     const record = source.records[Math.floor(rng() * source.records.length)];
@@ -195,15 +203,15 @@ export async function growSprawl({
   if (!Number.isFinite(mutation) || mutation < 0 || mutation > 1)
     throw new Error("Mutation must be between zero and one.");
   if (!root.trim()) throw new Error("Give the machine a seed phrase.");
-  const lineageMemory =
-    composer === MEMORY_COMPOSER
-      ? validateMemory(
-          memory,
-          Object.keys(corpusVersions(engine)),
-          motif || chooseMotif(root),
-        )
-      : null;
-  if (isContinuityComposer(composer)) await engine.prepareComposer(signal);
+  const lineageMemory = usesLineageMemory(composer)
+    ? validateMemory(
+        memory,
+        Object.keys(corpusVersions(engine)),
+        motif || chooseMotif(root),
+      )
+    : null;
+  if (isContinuityComposer(composer))
+    await engine.prepareComposer(signal, composer);
   const rng = randomStream(seed);
   const nodes = [
     {

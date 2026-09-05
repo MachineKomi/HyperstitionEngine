@@ -1,4 +1,7 @@
+import { CONTEXT_COMPOSER } from "./context.js";
 export const MEMORY_COMPOSER = "continuity-2";
+export const usesLineageMemory = (version) =>
+  [MEMORY_COMPOSER, CONTEXT_COMPOSER].includes(version);
 export const MEMORY_LIMIT = 12;
 
 export const cloneMemory = (memory = []) =>
