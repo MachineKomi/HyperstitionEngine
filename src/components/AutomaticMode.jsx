@@ -46,7 +46,7 @@ export default function AutomaticMode() {
     >
       <div className="automatic-heading">
         <div>
-          <p className="eyebrow">A SEED. FIVE RULES. NO FINAL CHAMBER.</p>
+          <p className="eyebrow">A SEED. TWELVE GESTURES. NO FINAL CHAMBER.</p>
           <h2>
             {automaticMode ? "Let the circuit dream." : "The circuit is yours."}
           </h2>
@@ -66,9 +66,9 @@ export default function AutomaticMode() {
         </span>
       </div>
       <p className="automatic-description">
-        The engine charges its own field, grows a tree, chooses an heir, then
-        feeds it back. The same seed and bound voices unfold the same path.
-        Switch to Manual at any moment.
+        The conductor evokes ghosts, charges the field, invokes Markov and
+        grammar, grows and prunes a tree, then inherits its heir. The same seed
+        and corpus unfold the same path. Switch to Manual at any moment.
       </p>
       <form
         className="automatic-seed-form"

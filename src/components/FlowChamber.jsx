@@ -81,6 +81,7 @@ export default function FlowChamber({
   useEffect(() => {
     if (!automaticEntry) return;
     setEntries((previous) => mergeChronicle(previous, [automaticEntry]));
+    setPressure(automaticEntry.pressure);
     setDirty(true);
   }, [automaticEntry]);
   useEffect(() => {
@@ -357,7 +358,9 @@ export default function FlowChamber({
       <div className="flow-status">
         <span role="status">{notice}</span>
         <span>
-          {completed} / {epochs} EPOCHS
+          {store.automaticMode
+            ? `${automaticEntry ? automaticEntry.settings.epoch + 1 : 0} COMPLETED IN THIS LINEAGE`
+            : `${completed} / ${epochs} EPOCHS`}
         </span>
       </div>
       <div className="chronicle-heading">
@@ -444,6 +447,35 @@ export default function FlowChamber({
                       <p>
                         <b>ASPECTS</b> {entry.settings.aspects.join(" + ")}
                       </p>
+                      {entry.conductor && (
+                        <div className="fossil-conductor">
+                          <b>
+                            CONDUCTOR I /{" "}
+                            {entry.conductor.protocol.toUpperCase()} ×
+                            {entry.conductor.count}
+                          </b>
+                          <p>
+                            Oracle seed {entry.conductor.oracleSeed}.{" "}
+                            {entry.conductor.inoculate
+                              ? "The oracle entered this origin."
+                              : "The oracle remained a separate transmission."}{" "}
+                            {entry.conductor.pruned
+                              ? `Branch ${entry.conductor.pruned} was severed; ${entry.conductor.surviving} nodes survived.`
+                              : "All generated nodes survived."}{" "}
+                            {entry.conductor.rebirth
+                              ? "A rebirth cleared ancestral memory."
+                              : ""}
+                          </p>
+                          <details>
+                            <summary>READ THE RECORDED RITUAL</summary>
+                            {entry.conductor.outputs.map((text, i) => (
+                              <p key={i}>
+                                {i + 1}. {text}
+                              </p>
+                            ))}
+                          </details>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

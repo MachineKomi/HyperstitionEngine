@@ -1,4 +1,5 @@
 import { normalizeSpan, sourceAddress } from "../engine/sourceSpans.js";
+import { CONDUCTOR_VERSION } from "../engine/conductor.js";
 import {
   isContinuityComposer,
   LEGACY_COMPOSER,
@@ -229,12 +230,63 @@ export function validateChronicle(data) {
         end: t.end,
       };
     }
+    let conductor;
+    if (entry.conductor !== undefined) {
+      const d = entry.conductor;
+      if (
+        !d ||
+        d.version !== CONDUCTOR_VERSION ||
+        d.epoch !== s.epoch ||
+        JSON.stringify(d.aspects) !== JSON.stringify(s.aspects) ||
+        d.protocol !== (s.epoch % 2 ? "grammar" : "markov") ||
+        !Number.isInteger(d.oracleSeed) ||
+        !number(d.oracleSeed, 0, 4294967295) ||
+        !Number.isInteger(d.initialSeed) ||
+        !number(d.initialSeed, 0, 4294967295) ||
+        d.count !== (s.epoch % 8 === 7 ? 50 : 1) ||
+        !Array.isArray(d.outputs) ||
+        d.outputs.length !== d.count ||
+        d.outputs.some((t) => !text(t, 1200) || !t.trim()) ||
+        d.rebirth !== (s.epoch > 0 && s.epoch % 12 === 0) ||
+        d.inoculate !== (s.epoch % 4 === 3) ||
+        d.prune !== (s.epoch % 3 === 2) ||
+        d.cycle !== s.cycle ||
+        d.entropy !== s.entropy ||
+        !text(d.reason, 200) ||
+        !(d.pruned === null || (d.prune && /^[1-4]$/.test(d.pruned))) ||
+        d.surviving !==
+          entry.population -
+            (d.pruned === null
+              ? 0
+              : (s.branches ** s.depth - 1) / (s.branches - 1))
+      )
+        throw new Error("Invalid conductor record in this chronicle.");
+      conductor = {
+        version: d.version,
+        epoch: d.epoch,
+        aspects: [...d.aspects],
+        protocol: d.protocol,
+        oracleSeed: d.oracleSeed,
+        count: d.count,
+        rebirth: d.rebirth,
+        cycle: d.cycle,
+        prune: d.prune,
+        inoculate: d.inoculate,
+        entropy: d.entropy,
+        reason: d.reason,
+        outputs: [...d.outputs],
+        pruned: d.pruned,
+        surviving: d.surviving,
+        initialSeed: d.initialSeed,
+      };
+    }
     // Keep only the fields used by the app, including replay settings and source traces.
     return {
       id: entry.id,
       time: entry.time,
       pressure: entry.pressure,
       population: entry.population,
+      ...(conductor ? { conductor } : {}),
       settings: {
         root: s.root,
         branches: s.branches,

@@ -53,12 +53,12 @@ export class GrammarEngine {
     );
   }
 
-  getRandom(list) {
+  getRandom(list, rng = Math.random) {
     if (!list || list.length === 0) return "[(void)]";
-    return list[Math.floor(Math.random() * list.length)];
+    return list[Math.floor(rng() * list.length)];
   }
 
-  generate(entropyLevel) {
+  generate(entropyLevel, rng = Math.random) {
     // Select template category based on entropy
     // Low Entropy (0-30) = Prophecy (Structured, Archaic)
     // Medium Entropy (30-70) = Accelerator (Dynamic, Cybernetic)
@@ -74,17 +74,16 @@ export class GrammarEngine {
     }
 
     const templateList = this.templates[category];
-    const template =
-      templateList[Math.floor(Math.random() * templateList.length)];
+    const template = templateList[Math.floor(rng() * templateList.length)];
 
     let result = template
-      .replace(/<noun>/g, () => this.getRandom(this.posData.nouns))
-      .replace(/<verb>/g, () => this.getRandom(this.posData.verbs))
-      .replace(/<adj>/g, () => this.getRandom(this.posData.adjectives));
+      .replace(/<noun>/g, () => this.getRandom(this.posData.nouns, rng))
+      .replace(/<verb>/g, () => this.getRandom(this.posData.verbs, rng))
+      .replace(/<adj>/g, () => this.getRandom(this.posData.adjectives, rng));
 
     // High entropy might glitch the text
     if (normalizedEntropy > 90) {
-      result = result.replace(/ /g, () => (Math.random() > 0.8 ? "_" : " "));
+      result = result.replace(/ /g, () => (rng() > 0.8 ? "_" : " "));
     }
 
     return result;

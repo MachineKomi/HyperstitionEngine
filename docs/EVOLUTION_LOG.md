@@ -78,6 +78,18 @@ This records changes to project practice. It does not record changes to a model'
 
 **Revisit.** Gather held-out reader judgments and source annotations before broadening the filter. Compare source balance as its own experiment. Neither a lack of matched cues nor increased lexical variety proves coherence.
 
+## 5 September 2026 · v0.19 · Give the automatic hand a body
+
+**Problem.** The user observed that auto mode left many mechanisms idle or visually unexplained. Inspection confirmed that source selection, Markov and grammar were outside the automatic tree loop.
+
+**Change.** A versioned conductor now binds a sliding seeded ghost deck, invokes both real oracle engines with explicit random streams, charges the cog, periodically multiplies and inoculates, prunes around a protected heir, and performs rebirths. A switchboard, gesture log, batch monitor and measured epoch graphs show the consequences. Source rebinding is orchestrated at epoch boundaries without resetting the conductor's seed history.
+
+**Interpretation.** The existing Land reading's emphasis on feedback becomes a concrete dependency: an oracle output can alter the next origin and seed. Fixed rhythms ensure mechanical coverage; the surviving language changes subsequent conditions. This is procedural feedback, not a claim of consciousness, self-modification or measured profundity.
+
+**Evidence and limits.** A 36-epoch production-preview run visited every ghost, generated 232 oracle outputs, pruned twelve trees and crossed two rebirths. Fifteen epochs matched a separate development run exactly. Tests retain previous composer replays and cover interruption inside new gestures. Seven viewport checks and ten rectangle samples retained stable layout and pinned reading. The [release report](CONDUCTOR.md) records resource bounds and the distinction between fossil replay and conductor restart.
+
+**Revisit.** Measure ghost-binding cost on real mobile hardware and review whether periodic inoculation improves coherence. More visible mechanisms are not evidence of better writing. The existing project rules already require both measurements, so AGENTS.md needs no new obligation.
+
 ## Amendment record format
 
 For future entries, record:

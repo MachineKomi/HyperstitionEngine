@@ -37,6 +37,8 @@ The current plan does not include training a foundation model, autonomous networ
 
 ### 0A. Stabilize the automatic encounter
 
+**v0.19 checkpoint:** the [conductor](CONDUCTOR.md) drives source binding and both oracle engines alongside branching, pruning, inheritance and rebirth. Twelve visible gesture states and measured epoch plots address previously idle automatic controls. Next: profile repeated source binding on lower-end phones and evaluate the literary effect of oracle inoculation separately from mechanical coverage.
+
 **Reader need:** arrive, watch, and retain control.
 
 **Requirements:** keep the auto/manual switch prominent; expose the seed and current rule; pause unnecessary work when the tab is hidden; cancel in-flight growth when switching to manual; retain completed epochs; recover visibly from unavailable corpora or generation errors.

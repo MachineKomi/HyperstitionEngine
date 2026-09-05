@@ -7,11 +7,8 @@ import {
   pruneBranch,
 } from "../engine/sprawl";
 import { inheritFlowSettings } from "../engine/flow";
-import {
-  AUTOMATIC_TRACE_LIMIT,
-  createAutomaticState,
-  runAutomatic,
-} from "../engine/automatic";
+import { AUTOMATIC_TRACE_LIMIT } from "../engine/automatic";
+import { createConductorState, runConductor } from "../engine/conductor";
 import FlowChamber from "./FlowChamber";
 import SourceEvidence from "./SourceEvidence";
 import LineageMemory from "./LineageMemory";
@@ -33,6 +30,7 @@ const FIRST_WORD =
 const makeSeed = () => crypto.getRandomValues(new Uint32Array(1))[0];
 const pad = (value) => String(value).padStart(3, "0");
 const contextFor = (settings) => ({
+  ...(settings.prunedBranch ? { prunedBranch: settings.prunedBranch } : {}),
   motif: settings.motif,
   corpusVersions: settings.corpusVersions,
   ...(usesLineageMemory(settings.composer)
@@ -167,7 +165,12 @@ function SprawlMap({
   );
 }
 
-export default function SprawlChamber({ engines, ready, availableAspects }) {
+export default function SprawlChamber({
+  engines,
+  ready,
+  availableAspects,
+  bindAutomatic,
+}) {
   const store = useEntropyStore();
   const [root, setRoot] = useState(FIRST_WORD);
   const [branches, setBranches] = useState(3);
@@ -193,18 +196,12 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
   const [hidden, setHidden] = useState(() => document.hidden);
   const automaticState = useRef(null);
   const automaticRevision = useRef(-1);
-  const automaticAspects = useRef("");
   const controller = useRef(null);
   const alive = useRef(true);
   const selected = pinned?.node || nodes.find((node) => node.id === selectedId);
   const specimenRun = pinned?.run || run;
   const locked = store.isGenerating || store.automaticMode;
-  const {
-    automaticMode,
-    automaticSeed,
-    automaticRevision: revision,
-    selectedSpirits,
-  } = store;
+  const { automaticMode, automaticSeed, automaticRevision: revision } = store;
   useEffect(() => {
     if (specimenText.current) specimenText.current.scrollTop = 0;
   }, [selected?.text]);
@@ -227,24 +224,18 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
   useEffect(() => {
     if (!automaticMode) return;
     if (useEntropyStore.getState().automaticStatus === "error") return;
-    if (!ready || hidden) {
+    if (hidden) {
       useEntropyStore
         .getState()
         .setAutomaticStatus(hidden ? "paused" : "loading");
       return;
     }
-    const boundAspects = selectedSpirits.join(",");
-    if (
-      automaticRevision.current !== revision ||
-      automaticAspects.current !== boundAspects
-    ) {
-      automaticState.current = createAutomaticState(
-        automaticSeed,
-        CONTEXT_COMPOSER,
-      );
+    if (automaticRevision.current !== revision) {
+      automaticState.current = createConductorState(automaticSeed);
       automaticRevision.current = revision;
-      automaticAspects.current = boundAspects;
+      useEntropyStore.getState().clearMachineHistory();
       setAutomaticTrace([]);
+      setAutomaticEntry(null);
       setPinned(null);
     }
     const abort = new AbortController();
@@ -268,13 +259,20 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
             update();
         }),
     });
-    runAutomatic({
-      engine: engines.current.sprawl,
+    runConductor({
+      bind: bindAutomatic,
       state: automaticState.current,
-      aspects: current.selectedSpirits,
-      cycle: current.cycle,
       signal: abort.signal,
       wait: clock.wait,
+      onAction: (action) => {
+        if (valid()) useEntropyStore.getState().setMachineAction(action);
+      },
+      onOracle: (text, plan, index) => {
+        if (valid())
+          useEntropyStore
+            .getState()
+            .setAutomaticOracle(text, index, plan.count);
+      },
       onPhase: (phase, generation) => {
         if (valid())
           useEntropyStore.getState().setAutomaticPhase(phase, generation);
@@ -323,7 +321,22 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
       },
       onEpoch: (entry, tree, next, rule) => {
         if (!valid()) return;
+        const live = useEntropyStore.getState();
+        live.recordMachineEpoch(entry);
+        live.consumeEntropy(20);
+        entry.conductor.outputs.forEach((text, index) =>
+          live.setGeneratedText(text, {
+            mode: entry.conductor.protocol,
+            aspects: entry.settings.aspects,
+            epoch: entry.settings.epoch,
+            seed: entry.conductor.oracleSeed,
+            index,
+            cycle: entry.settings.cycle,
+            entropy: entry.conductor.entropy,
+          }),
+        );
         automaticState.current = next;
+        setRun({ ...entry.settings, conductor: entry.conductor });
         setNodes(tree);
         setSelectedId(entry.champion.id);
         setRoot(next.root);
@@ -396,15 +409,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
         setFlowing(false);
       }
     };
-  }, [
-    automaticMode,
-    automaticSeed,
-    revision,
-    ready,
-    hidden,
-    engines,
-    selectedSpirits,
-  ]);
+  }, [automaticMode, automaticSeed, revision, hidden, bindAutomatic]);
 
   function publish(next) {
     setNodes(next);
@@ -453,7 +458,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
     setSelectedId("0");
     setNotice("The origin is losing its monopoly.");
     try {
-      const result = await growSprawl({
+      let result = await growSprawl({
         ...settings,
         engine: engines.current.sprawl,
         signal: abort.signal,
@@ -462,6 +467,10 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
         },
       });
       if (!alive.current) return;
+      if (settings.prunedBranch) {
+        result = pruneBranch(result, settings.prunedBranch);
+        publish(result);
+      }
       setSelectedId(result[result.length - 1].id);
       setNotice(
         result.length + " fragments. Choose what survives. Feed it back.",
@@ -1003,7 +1012,11 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
             ↻ FEED BACK INTO THE ORIGIN
           </button>
           <div className="specimen-actions">
-            <button disabled={!selected} onClick={canonize}>
+            <button
+              className="canonize"
+              disabled={!selected}
+              onClick={canonize}
+            >
               ✳ CANONIZE
             </button>
             <button
@@ -1014,6 +1027,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
                 (pinned && pinned.run !== run)
               }
               onClick={burn}
+              className="burn-branch"
             >
               † BURN BRANCH
             </button>
@@ -1121,7 +1135,14 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
             throw new Error(
               "This epoch uses aspects unavailable in the current corpus.",
             );
-          const recalled = follow ? inheritFlowSettings(entry) : entry.settings;
+          const recalled = follow
+            ? inheritFlowSettings(entry)
+            : {
+                ...entry.settings,
+                ...(entry.conductor?.pruned
+                  ? { prunedBranch: entry.conductor.pruned }
+                  : {}),
+              };
           setComposer(recalled.composer || LEGACY_COMPOSER);
           setReplayContext(
             isContinuityComposer(recalled.composer)

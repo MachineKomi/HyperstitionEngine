@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import EntropyPool from "./components/EntropyPool";
 import OracleDisplay from "./components/OracleDisplay";
 import BatchGenerator from "./components/BatchGenerator";
@@ -9,6 +9,7 @@ import { GrammarEngine } from "./engine/grammar";
 import { SprawlEngine } from "./engine/sprawl";
 import SprawlChamber from "./components/SprawlChamber";
 import AutomaticMode, { ModeSwitch } from "./components/AutomaticMode";
+import ConductorConsole from "./components/ConductorConsole";
 
 const names = {
   N_Land: "Nick Land",
@@ -43,6 +44,49 @@ export default function App() {
   const engines = useRef(null);
   const busy = useRef(false);
   const locked = isGenerating || store.automaticMode;
+  const automaticBinding = useRef("");
+  const bindAutomatic = useCallback(async (aspects, signal) => {
+    const key = aspects.join(",");
+    if (signal.aborted)
+      throw new DOMException("Binding interrupted.", "AbortError");
+    if (automaticBinding.current === key && engines.current)
+      return engines.current;
+    setReady(false);
+    setStatus("EVOKING GHOSTS");
+    useEntropyStore.getState().setSelectedSpirits(aspects);
+    const data = await Promise.all(aspects.map(loadSpirit));
+    if (signal.aborted)
+      throw new DOMException("Binding interrupted.", "AbortError");
+    const markov = new MarkovEngine(),
+      grammar = new GrammarEngine(),
+      sprawl = new SprawlEngine();
+    const cancel = () => markov.dispose("Binding interrupted.");
+    signal.addEventListener("abort", cancel, { once: true });
+    try {
+      grammar.loadCorpus(data);
+      sprawl.loadCorpus(data);
+      await markov.loadCorpus(data);
+      if (signal.aborted)
+        throw new DOMException("Binding interrupted.", "AbortError");
+      engines.current?.markov.dispose();
+      engines.current = { markov, grammar, sprawl };
+      automaticBinding.current = key;
+      setSentenceCount(
+        data.reduce((sum, source) => sum + source.sentences.length, 0),
+      );
+      setReady(true);
+      setStatus("ORACLE ONLINE");
+      return engines.current;
+    } catch (error) {
+      markov.dispose();
+      if (signal.aborted)
+        throw new DOMException("Binding interrupted.", "AbortError");
+      setStatus("BINDING FAILED");
+      throw error;
+    } finally {
+      signal.removeEventListener("abort", cancel);
+    }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -62,7 +106,10 @@ export default function App() {
   }, [retry]);
 
   useEffect(() => {
+    if (store.automaticMode) return;
     if (!manifest) return;
+    automaticBinding.current = "";
+    engines.current?.markov.dispose();
     let cancelled = false;
     const markov = new MarkovEngine();
     const grammar = new GrammarEngine();
@@ -101,7 +148,7 @@ export default function App() {
       cancelled = true;
       markov.dispose();
     };
-  }, [manifest, selectedSpirits, retry]);
+  }, [manifest, selectedSpirits, retry, store.automaticMode]);
 
   async function generate(count = 1) {
     if (
@@ -138,6 +185,9 @@ export default function App() {
 
   return (
     <div
+      data-machine-action={
+        store.automaticMode ? store.machineAction?.kind : undefined
+      }
       className={`app-container ${store.automaticMode ? "automatic-mode" : "manual-mode"} ${entropyLevel > 700 ? "meltdown" : ""}`}
     >
       <nav className="topbar" aria-label="Primary">
@@ -164,7 +214,7 @@ export default function App() {
           </p>
         </div>
         <div className="hero-note">
-          <span className="status-dot" /> SELF-RETURNING ORACLE / v0.18
+          <span className="status-dot" /> SELF-RETURNING ORACLE / v0.19
           <br />
           <p>
             The output becomes the input.
@@ -202,10 +252,12 @@ export default function App() {
       )}
       <main id="engine">
         <AutomaticMode />
+        <ConductorConsole names={names} />
         <SprawlChamber
           engines={engines}
           ready={ready}
           availableAspects={manifest?.spirits || []}
+          bindAutomatic={bindAutomatic}
         />
         <section
           className="console-grid"

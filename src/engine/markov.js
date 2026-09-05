@@ -37,11 +37,12 @@ export class MarkovEngine {
     await this.request("TRAIN", { sentences });
     this.ready = true;
   }
-  async generate(entropyLevel) {
+  async generate(entropyLevel, seed) {
     if (!this.ready) throw new Error("The engine is still binding.");
     const payload = await this.request("GENERATE", {
       options: { maxTries: 200 },
       entropyLevel,
+      seed,
     });
     return payload.result;
   }

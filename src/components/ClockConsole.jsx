@@ -80,7 +80,7 @@ export default function ClockConsole() {
                   ? "HEIR SELECTED / READ"
                   : phase === "grow"
                     ? `GROW / GENERATION ${generation}`
-                    : "CHARGE / NEW ORIGIN"}
+                    : `${phase.toUpperCase()} / CONDUCTOR`}
         </span>
       </div>
       <p className="clock-help">

@@ -18,6 +18,58 @@ const useEntropyStore = create((set) => ({
   clockPaused: false,
   automaticPhase: "charge",
   automaticGeneration: 0,
+  machineAction: null,
+  machineActions: [],
+  machineEpochs: [],
+  automaticOracle: "",
+  automaticOracleProgress: "",
+  setMachineAction: (action) =>
+    set((state) => ({
+      machineAction: action,
+      cycle: action.plan.cycle,
+      automaticPhase: action.kind,
+      machineActions: [...state.machineActions, action].slice(-16),
+      ...(action.kind === "rebirth"
+        ? { cycle: action.plan.cycle, entropyLevel: 0, generatedText: "" }
+        : {}),
+      ...(action.kind === "charge"
+        ? { cogTurns: state.cogTurns + 1, entropyLevel: action.plan.entropy }
+        : {}),
+      ...(["grammar", "markov"].includes(action.kind)
+        ? { generationMode: action.kind }
+        : {}),
+    })),
+  setAutomaticOracle: (automaticOracle, index, count) =>
+    set({
+      automaticOracle,
+      automaticOracleProgress: `${index + 1} / ${count}`,
+    }),
+  recordMachineEpoch: (entry) =>
+    set((state) => ({
+      machineEpochs: [
+        ...state.machineEpochs,
+        {
+          epoch: entry.settings.epoch,
+          population: entry.population,
+          surviving: entry.conductor.surviving,
+          novelty: entry.champion.novelty,
+          echo: entry.champion.echo,
+          entropy: entry.settings.entropy,
+          source: entry.champion.source,
+          heir: entry.champion.id,
+          aspects: entry.settings.aspects,
+          protocol: entry.conductor.protocol,
+        },
+      ].slice(-96),
+    })),
+  clearMachineHistory: () =>
+    set({
+      machineAction: null,
+      machineActions: [],
+      machineEpochs: [],
+      automaticOracle: "",
+      automaticOracleProgress: "",
+    }),
   setClockRate: (rate) => set({ clockRate: clampClockRate(rate) }),
   toggleClock: () => set((state) => ({ clockPaused: !state.clockPaused })),
   setAutomaticPhase: (automaticPhase, automaticGeneration) =>

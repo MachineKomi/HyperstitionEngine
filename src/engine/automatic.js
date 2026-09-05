@@ -108,6 +108,7 @@ export async function runAutomatic({
   chargeMs = 800,
   wait = waitForPulse,
   maxEpochs = Infinity,
+  planEpoch = planAutomaticEpoch,
 }) {
   let current = state;
   for (let count = 0; count < maxEpochs; count++) {
@@ -118,7 +119,7 @@ export async function runAutomatic({
       throw new Error(
         "This lineage reached its horizon. Restart with a seed to continue.",
       );
-    const plan = planAutomaticEpoch(current);
+    const plan = planEpoch(current);
     const { pressure, rule, population, ...settings } = plan;
     const run = {
       ...settings,

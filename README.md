@@ -16,6 +16,8 @@ Select a graph node or choose **PIN TO READ** to hold a specimen while growth co
 
 ## Run
 
+**v0.19 / The conductor:** automatic mode now rotates all eleven ghosts, invokes seeded Markov and grammar rituals, charges the cog, multiplies transmissions, inoculates origins, prunes branches and performs rebirths. A switchboard lights each action; live plots and an epoch ledger show the consequences. See [the rules, replay contract and verification](docs/CONDUCTOR.md).
+
 **v0.18 / Context & memory:** Continuity III is the automatic default. A narrow, audited screen removes passages that point back to missing context. The reader separates inherited text, borrowed prose and authored endings; PASSAGE CUES exposes the screen's findings. Earlier composers remain available for exact replay. See [the candidate audit, comparison and limits](docs/CONTEXT_SCREEN.md).
 
 **v0.17 / Ancestral memory:** Continuity II introduced ancestral memory. Each branch remembers its last 12 source passages and authored endings, making room for fresh choices before letting old ones return. The memory inspector shows these impressions; selecting one pins its branch. Only the surviving branch's memory feeds the next epoch. Manual mode and archives retain Continuity I and the original word-splice composer. See [the rules, 900-epoch comparison and limits](docs/ANCESTRAL_MEMORY.md).

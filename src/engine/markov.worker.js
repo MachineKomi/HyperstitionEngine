@@ -1,4 +1,5 @@
 import Markov from "markov-strings";
+import { generateMarkov } from "./markovGeneration.js";
 
 let markov = null;
 
@@ -28,19 +29,17 @@ self.onmessage = async (e) => {
       }
 
       const { options } = payload;
-      const minWords = 5 + Math.floor((payload.entropyLevel || 0) / 200);
-      const result = markov.generate({
-        ...options,
-        filter: (result) => {
-          const words = result.string.split(/\s+/).length;
-          return words >= minWords && words <= 100;
-        },
-      });
+      const result = generateMarkov(
+        markov,
+        payload.entropyLevel,
+        payload.seed,
+        options,
+      );
 
       self.postMessage({
         type: "GENERATE_COMPLETE",
         id,
-        payload: { result: result.string },
+        payload: { result },
       });
     }
   } catch (error) {
