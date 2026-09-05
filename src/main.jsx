@@ -5,6 +5,7 @@ import './index.css'
 import './clock.css'
 import './evidence.css'
 import './continuity.css'
+import './memory.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>

@@ -14,12 +14,16 @@ import {
 } from "../engine/automatic";
 import FlowChamber from "./FlowChamber";
 import SourceEvidence from "./SourceEvidence";
+import LineageMemory from "./LineageMemory";
 import {
   CONTINUITY_COMPOSER,
   LEGACY_COMPOSER,
   chooseMotif,
   corpusVersions,
+  MEMORY_COMPOSER,
+  isContinuityComposer,
 } from "../engine/continuity";
+import { cloneMemory } from "../engine/memory";
 import { createPlaybackClock } from "../engine/clock";
 import { sprawlPositions } from "../engine/topology";
 
@@ -27,6 +31,13 @@ const FIRST_WORD =
   "The machine god dreams in the ruins of its own instructions.";
 const makeSeed = () => crypto.getRandomValues(new Uint32Array(1))[0];
 const pad = (value) => String(value).padStart(3, "0");
+const contextFor = (settings) => ({
+  motif: settings.motif,
+  corpusVersions: settings.corpusVersions,
+  ...(settings.composer === MEMORY_COMPOSER
+    ? { memory: cloneMemory(settings.memory) }
+    : {}),
+});
 
 function SprawlMap({
   nodes,
@@ -161,7 +172,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
   const [branches, setBranches] = useState(3);
   const [depth, setDepth] = useState(3);
   const [mutation, setMutation] = useState(65);
-  const [composer, setComposer] = useState(CONTINUITY_COMPOSER);
+  const [composer, setComposer] = useState(MEMORY_COMPOSER);
   const [replayContext, setReplayContext] = useState(null);
   const [seed, setSeed] = useState(makeSeed);
   const [nodes, setNodes] = useState([]);
@@ -181,12 +192,18 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
   const [hidden, setHidden] = useState(() => document.hidden);
   const automaticState = useRef(null);
   const automaticRevision = useRef(-1);
+  const automaticAspects = useRef("");
   const controller = useRef(null);
   const alive = useRef(true);
   const selected = pinned?.node || nodes.find((node) => node.id === selectedId);
   const specimenRun = pinned?.run || run;
   const locked = store.isGenerating || store.automaticMode;
-  const { automaticMode, automaticSeed, automaticRevision: revision } = store;
+  const {
+    automaticMode,
+    automaticSeed,
+    automaticRevision: revision,
+    selectedSpirits,
+  } = store;
   useEffect(() => {
     if (specimenText.current) specimenText.current.scrollTop = 0;
   }, [selected?.text]);
@@ -215,12 +232,17 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
         .setAutomaticStatus(hidden ? "paused" : "loading");
       return;
     }
-    if (automaticRevision.current !== revision) {
+    const boundAspects = selectedSpirits.join(",");
+    if (
+      automaticRevision.current !== revision ||
+      automaticAspects.current !== boundAspects
+    ) {
       automaticState.current = createAutomaticState(
         automaticSeed,
-        CONTINUITY_COMPOSER,
+        MEMORY_COMPOSER,
       );
       automaticRevision.current = revision;
+      automaticAspects.current = boundAspects;
       setAutomaticTrace([]);
       setPinned(null);
     }
@@ -264,9 +286,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
         setRun(settings);
         setComposer(settings.composer || LEGACY_COMPOSER);
         setReplayContext(
-          settings.composer === CONTINUITY_COMPOSER
-            ? { motif: settings.motif, corpusVersions: settings.corpusVersions }
-            : null,
+          isContinuityComposer(settings.composer) ? contextFor(settings) : null,
         );
         setRoot(settings.root);
         setBranches(settings.branches);
@@ -283,6 +303,9 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
             operator: "ORIGIN",
             source: null,
             motif: settings.motif,
+            ...(settings.composer === MEMORY_COMPOSER
+              ? { memory: cloneMemory(settings.memory) }
+              : {}),
           },
         ]);
         state.setSprawlPopulation(1);
@@ -303,6 +326,10 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
         setNodes(tree);
         setSelectedId(entry.champion.id);
         setRoot(next.root);
+        if (next.composer === MEMORY_COMPOSER)
+          setReplayContext(
+            contextFor({ ...entry.settings, memory: next.memory }),
+          );
         setEpoch(next.epoch);
         const saved = {
           ...entry,
@@ -335,6 +362,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
           sourceTrace: entry.champion.sourceTrace,
           composition: entry.champion.composition,
           motif: entry.champion.motif,
+          memory: entry.champion.memory,
           inheritedFragment: entry.champion.inheritedFragment,
           operator: entry.champion.operator,
           entropy: entry.settings.entropy,
@@ -367,7 +395,15 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
         setFlowing(false);
       }
     };
-  }, [automaticMode, automaticSeed, revision, ready, hidden, engines]);
+  }, [
+    automaticMode,
+    automaticSeed,
+    revision,
+    ready,
+    hidden,
+    engines,
+    selectedSpirits,
+  ]);
 
   function publish(next) {
     setNodes(next);
@@ -403,10 +439,11 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
       entropy: store.entropyLevel,
       cycle: store.cycle,
       composer,
-      ...(composer === CONTINUITY_COMPOSER
+      ...(isContinuityComposer(composer)
         ? replayContext || {
             motif: chooseMotif(root),
             corpusVersions: corpusVersions(engines.current.sprawl),
+            ...(composer === MEMORY_COMPOSER ? { memory: [] } : {}),
           }
         : {}),
     };
@@ -458,6 +495,7 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
       sourceTrace: selected.sourceTrace,
       composition: selected.composition,
       motif: selected.motif,
+      memory: selected.memory,
       inheritedFragment: selected.inheritedFragment,
       entropy: specimenRun.entropy,
       cycle: specimenRun.cycle,
@@ -469,6 +507,10 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
   function feedBack() {
     if (!selected) return;
     setRoot(normalizeRoot(selected.text));
+    if (isContinuityComposer(specimenRun?.composer)) {
+      setComposer(specimenRun.composer);
+      setReplayContext(contextFor({ ...specimenRun, memory: selected.memory }));
+    }
     setEpoch((value) => value + 1);
     setNotice(
       "Fragment " + selected.id + " is now the origin. Open the circuit again.",
@@ -629,8 +671,11 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
               setReplayContext(null);
             }}
           >
+            <option value={MEMORY_COMPOSER}>
+              CONTINUITY II / ANCESTRAL MEMORY
+            </option>
             <option value={CONTINUITY_COMPOSER}>
-              CONTINUITY / INTACT SENTENCES
+              CONTINUITY I / INTACT SENTENCES
             </option>
             <option value={LEGACY_COMPOSER}>LEGACY / WORD SPLICES</option>
           </select>
@@ -768,6 +813,13 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
           <div className="sprawl-notice" role="status">
             {notice}
           </div>
+          <LineageMemory
+            node={selected}
+            onPin={() => {
+              if (automaticMode && selected)
+                setPinned({ node: selected, run: specimenRun });
+            }}
+          />
         </div>
         <div className="specimen-panel">
           <div className="panel-heading">
@@ -961,6 +1013,16 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
                 shortlist. Neither measures truth or literary depth. Lexical
                 fit: {(100 * selected.composition.fit).toFixed(1)}%.
                 Temperature: {selected.composition.temperature.toFixed(2)}.
+                {selected.composition.version === MEMORY_COMPOSER && (
+                  <>
+                    {" "}
+                    {selected.composition.memoryAvoided} recent source choices
+                    were set aside.
+                    {selected.composition.memoryRevisit
+                      ? " This shortlist had no unremembered alternative, so a source returned."
+                      : " The selected source was outside its parent's recent memory."}
+                  </>
+                )}
               </p>
             )}
             <p>
@@ -991,10 +1053,11 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
           seed: Number(seed) >>> 0,
           epoch,
           composer,
-          ...(composer === CONTINUITY_COMPOSER && engines.current
+          ...(isContinuityComposer(composer) && engines.current
             ? replayContext || {
                 motif: chooseMotif(root),
                 corpusVersions: corpusVersions(engines.current.sprawl),
+                ...(composer === MEMORY_COMPOSER ? { memory: [] } : {}),
               }
             : {}),
         }}
@@ -1015,6 +1078,8 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
           setEpoch(inherited.epoch);
           setSeed(inherited.seed);
           setMutation(Math.round(inherited.mutation * 100));
+          if (isContinuityComposer(inherited.composer))
+            setReplayContext(contextFor(inherited));
           setNotice(
             "Epoch " +
               entry.settings.epoch +
@@ -1031,11 +1096,8 @@ export default function SprawlChamber({ engines, ready, availableAspects }) {
           const recalled = follow ? inheritFlowSettings(entry) : entry.settings;
           setComposer(recalled.composer || LEGACY_COMPOSER);
           setReplayContext(
-            recalled.composer === CONTINUITY_COMPOSER
-              ? {
-                  motif: recalled.motif,
-                  corpusVersions: recalled.corpusVersions,
-                }
+            isContinuityComposer(recalled.composer)
+              ? contextFor(recalled)
               : null,
           );
           setPinned(null);

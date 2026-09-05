@@ -93,11 +93,15 @@ First form a bounded lexical shortlist from selected-source shards. Use exact ID
 
 ### 1B. Several pressures, no single profundity score
 
+**v0.17 checkpoint:** Continuity II excludes remembered source passages and endings when the bounded shortlist has alternatives. Its inspector distinguishes avoided choices from a necessary revisit. The [comparison](ANCESTRAL_MEMORY.md) shows fewer recent repeats, while source imbalance and semantic evaluation remain unresolved.
+
 Score candidate sets along separate dimensions: grammatical completeness, motif retention, lexical repetition, source diversity, semantic distance if available, and change in the represented relation. Apply hard validity constraints first, then a diversity penalty and seeded selection among suitable candidates. Keep a few non-dominated alternatives rather than turning every property into one opaque scalar.
 
 **Acceptance:** the inspector explains why a candidate survived or was rejected; repeated templates can lose preference even when their nouns change; conflicting pressures remain inspectable; metrics retain literal names. A reader preference study, not embedding distance alone, decides whether outputs improved.
 
 ### 1C. Motifs that go dormant and return
+
+**v0.17 checkpoint:** a 12-impression ledger follows the surviving ancestry and is preserved in replay, manual feedback and follow-heir operations. A fixed inspector exposes that memory. This is source/ending memory; dormant conceptual motifs, conflicts, strengths and scheduled anticipation remain future work.
 
 Maintain a finite ledger of objects, conflicts and unrealized images. Each motif has a source, last appearance, strength, expiry and a small transition history. Revisit a dormant motif after a seeded interval. Permit one announced image to condition later retrieval, creating an observable anticipation loop.
 

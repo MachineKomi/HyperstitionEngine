@@ -43,6 +43,7 @@ In AUTOPOIESIS, BEGIN POSSESSION runs successive epochs using the origin and gro
 ## Clock and inspection
 
 - Automatic playback starts at 1×: 0.8 seconds to charge, 1.5 seconds per generation and 8–18 seconds to read the heir, depending on word count. The speed range is 0.25×–32×; arrow keys adjust the focused CLOCK SPEED slider.
+- Continuity II remembers 12 ancestral source passages and endings. Select a numbered impression to hold and inspect its branch. Manual COMPOSITION also offers Continuity I and legacy splices. Replay restores the recorded memory; FOLLOW HEIR carries the winning memory forward. Editing the root or choosing a composer starts a fresh memory.
 - PAUSE CLOCK holds the unfinished beat, including during growth. RESUME CLOCK continues it. A hidden tab still cancels its partial epoch and retries that epoch on return; neither mechanism accumulates catch-up work.
 - Clicking a node in automatic mode pins that fragment. PIN TO READ also holds the current selection. FOLLOW LIVE releases it. Pinned text and its provenance survive subsequent epochs until unpinned or the seed is restarted.
 - CANONIZE records the inspected fragment. EXPORT THE ORGANISM exports the current live tree, even if you are inspecting an older pinned fragment.

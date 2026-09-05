@@ -1,0 +1,102 @@
+.lineage-memory {
+  height: 390px;
+  margin-top: 22px;
+  padding: 20px 18px 0;
+  border-top: 1px solid #655239;
+}
+.memory-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.memory-heading span {
+  font-size: 9px;
+  color: #b59e79;
+  letter-spacing: 0.08em;
+}
+.memory-heading h3 {
+  font:
+    italic 26px/1.4 Georgia,
+    serif;
+  color: #ddc9aa;
+  margin: 6px 0 15px;
+}
+.memory-heading strong {
+  font-size: 28px;
+  font-weight: 400;
+  color: #e5bf7d;
+  font-variant-numeric: tabular-nums;
+}
+.memory-heading small {
+  font-size: 10px;
+  color: #a38a64;
+}
+.memory-slots {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 5px;
+}
+.memory-slots button {
+  height: 44px;
+  padding: 5px 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #a490b7;
+  background: #1b1520;
+  border: 1px solid #51415e;
+}
+.memory-slots button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.memory-slots button[aria-pressed="true"] {
+  color: #f0d2a1;
+  border-color: #c39651;
+  background: #3c2d1a;
+}
+.memory-slots button i {
+  display: block;
+  height: 13px;
+  width: 3px;
+  background: currentColor;
+}
+.memory-reading {
+  height: 125px;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  margin-top: 16px;
+  padding-right: 8px;
+}
+.memory-reading > span {
+  color: #ac9675;
+  font-size: 9px;
+}
+.memory-reading p {
+  color: #d2c2d8;
+  font:
+    18px/1.6 Georgia,
+    serif;
+  margin: 9px 0 0;
+}
+.memory-rule {
+  font-size: 10px;
+  line-height: 1.7;
+  color: #ae9cba;
+  margin-top: 13px;
+}
+@media (max-width: 1100px) {
+  .lineage-memory {
+    height: 455px;
+  }
+  .memory-slots {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .memory-heading h3 {
+    font-size: 23px;
+  }
+  .memory-heading span {
+    font-size: 8px;
+  }
+}

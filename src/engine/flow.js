@@ -1,4 +1,5 @@
 import { growSprawl, normalizeRoot, randomStream } from "./sprawl.js";
+import { MEMORY_COMPOSER, cloneMemory } from "./memory.js";
 
 const vocabulary = (text) =>
   new Set(text.toLowerCase().match(/[\p{L}\p{N}]{3,}/gu) || []);
@@ -17,6 +18,9 @@ export function inheritFlowSettings({ settings, champion }) {
     seed: nextSeed(champion.text, settings.seed),
     epoch: settings.epoch + 1,
     mutation: Math.min(100, Math.round(settings.mutation * 100) + 3) / 100,
+    ...(settings.composer === MEMORY_COMPOSER
+      ? { memory: cloneMemory(champion.memory) }
+      : {}),
   };
 }
 

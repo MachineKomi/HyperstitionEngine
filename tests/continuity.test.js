@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import {
   SprawlEngine,
   growSprawl,
@@ -49,6 +50,17 @@ const setup = (engine) => ({
   mutation: 0.65,
   seed: 137,
   wait: async () => {},
+});
+
+test("continuity-1 retains its frozen 30-seed replay after newer composers arrive", async () => {
+  const engine = fixture(),
+    trees = [];
+  for (let seed = 0; seed < 30; seed++)
+    trees.push(await growSprawl({ ...setup(engine), seed }));
+  assert.equal(
+    createHash("sha256").update(JSON.stringify(trees)).digest("hex"),
+    "75456a02b7a0aea7f2ed0f04ee29ef8e3ab7f8bbee7f9ea642451a8b7f89f1b2",
+  );
 });
 
 test("continuity preserves whole inherited passages, exact source sentences and a recurring motif", async () => {

@@ -5,10 +5,14 @@ import {
   sourceAddress,
 } from "./sourceSpans.js";
 import { waitForPulse } from "./clock.js";
+import { MEMORY_COMPOSER, remember } from "./memory.js";
+export { MEMORY_COMPOSER } from "./memory.js";
 
 export const LEGACY_COMPOSER = "splice-1";
 export const CONTINUITY_COMPOSER = "continuity-1";
 export const SHORTLIST_LIMIT = 24;
+export const isContinuityComposer = (version) =>
+  [CONTINUITY_COMPOSER, MEMORY_COMPOSER].includes(version);
 const stop = new Set(
   "the a an and or but of to in on for by with as at from is are was were be been being it its this that these those not no all one their they them we our you your he his she her which who what when where how than then there have has had can could would should will shall may might must do does did into through upon between also only own more most very such some any each every both same other new so if because while".split(
     " ",
@@ -243,7 +247,9 @@ export class ContinuityComposer {
       );
   }
 
-  mutate(parent, rng, mutation) {
+  mutate(parent, rng, mutation, version = CONTINUITY_COMPOSER) {
+    const remembering = version === MEMORY_COMPOSER;
+    const memory = remembering ? parent.memory || [] : [];
     const motif = parent.motif || chooseMotif(parent.text);
     const query = terms(parent.text);
     const weight = (term) =>
@@ -268,7 +274,17 @@ export class ContinuityComposer {
     const fresh = choices.filter(
       (candidate) => !parent.text.includes(candidate.text),
     );
-    const shortlist = fresh.length ? fresh : choices;
+    let shortlist = fresh.length ? fresh : choices;
+    let memoryAvoided = 0;
+    if (remembering) {
+      const unseen = shortlist.filter(
+        (candidate) => !memory.some((item) => item.fragment === candidate.text),
+      );
+      if (unseen.length) {
+        memoryAvoided = shortlist.length - unseen.length;
+        shortlist = unseen;
+      }
+    }
     const querySet = new Set(query);
     let scored = shortlist.map((candidate) => {
       const total = candidate.terms.reduce(
@@ -300,7 +316,18 @@ export class ContinuityComposer {
       }
     }
     const { candidate, fit } = scored[selectedIndex];
-    const allowed = forms.filter((form) => form.id !== parent.operator);
+    let allowed = forms.filter((form) => form.id !== parent.operator);
+    if (remembering) {
+      const freshForms = allowed
+        .map((form) => ({
+          ...form,
+          endings: form.endings.filter(
+            (ending) => !memory.some((item) => item.carry === ending(motif)),
+          ),
+        }))
+        .filter((form) => form.endings.length);
+      if (freshForms.length) allowed = freshForms;
+    }
     const form = allowed[Math.floor(rng() * allowed.length)];
     const carry = form.endings[Math.floor(rng() * form.endings.length)](motif);
     const parentSentences = sentenceSpans(parent.text);
@@ -327,6 +354,15 @@ export class ContinuityComposer {
       source: candidate.source.id,
       sourceFragment: candidate.text,
       inheritedFragment: inherited,
+      ...(remembering
+        ? {
+            memory: remember(memory, {
+              source: candidate.source.id,
+              fragment: candidate.text,
+              carry,
+            }),
+          }
+        : {}),
       sourceTrace: {
         id: sourceAddress(
           candidate.source.id,
@@ -340,7 +376,7 @@ export class ContinuityComposer {
         end: candidate.end,
       },
       composition: {
-        version: CONTINUITY_COMPOSER,
+        version,
         candidates: scored.length,
         probability,
         probabilities,
@@ -349,6 +385,14 @@ export class ContinuityComposer {
         entropy,
         fit,
         temperature,
+        ...(remembering
+          ? {
+              memoryAvoided,
+              memoryRevisit: memory.some(
+                (item) => item.fragment === candidate.text,
+              ),
+            }
+          : {}),
       },
     };
   }

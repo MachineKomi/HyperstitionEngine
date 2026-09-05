@@ -54,6 +54,18 @@ This records changes to project practice. It does not record changes to a model'
 
 **Next experiment.** Compare a bounded repetition ledger and source-diversity pressure with this frozen composer. Evaluate whether recurring images develop across multiple epochs rather than merely appearing in authored endings. Optional encoder work still needs quality and device-cost evidence.
 
+## 2026-09-05 · Let memory exclude before it repeats
+
+**Evidence.** The v0.16 comparison exposed repeated source passages and endings. A new 30-seed, 30-epoch comparison found 71 recent source repeats and 282 recent ending repeats under Continuity I, using a three-winning-heir lookback. The same measurement found zero of each under Continuity II. [The report](ANCESTRAL_MEMORY.md) retains the unequal source balance, divergent tree counts and weak context-dependent sentences.
+
+**Experiment.** Give each node its own 12-impression ledger, exclude remembered passages when the sampled pool has fresh alternatives, avoid remembered endings and inherit only the winning path. Show the memory in a fixed, keyboard-accessible inspector. Selection pins the branch so inspection cannot chase live updates.
+
+**Practice preserved.** The composer receives a new version, with a frozen 30-seed digest for Continuity I. Replay stores input memory as well as output memory; following an heir uses its output ledger. This implements the existing versioning and ancestry guidance rather than adding authority to generated text.
+
+**Verification and limits.** The 43 tests cover copied lineage state, bounded memory, replay and abort/resume. Browser layout and pin checks span 320–1920px and landscape. A source-rebinding edge case required clearing automatic memory when its bound voices change; the browser check confirmed an empty epoch-zero restart followed by impressions from only the remaining source. A 250-epoch local benchmark remains bounded while archive size rises to roughly 1.16 MB for 108 entries. Exact repetition improved in the measured sample; grammar, semantic relationships and reader preference require separate evaluation.
+
+**Revisit.** Test whether source-context filtering can remove uninformative transcript fragments without flattening experimental prose. Compare source-diversity pressure separately from repetition control so each effect remains attributable.
+
 ## Amendment record format
 
 For future entries, record:

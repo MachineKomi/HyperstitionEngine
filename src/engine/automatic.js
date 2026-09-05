@@ -7,10 +7,12 @@ import {
 import { chooseHeir, nextSeed, waitForPulse } from "./flow.js";
 import {
   LEGACY_COMPOSER,
-  CONTINUITY_COMPOSER,
+  MEMORY_COMPOSER,
+  isContinuityComposer,
   chooseMotif,
   corpusVersions,
 } from "./continuity.js";
+import { cloneMemory } from "./memory.js";
 
 export const AUTOMATIC_ORIGIN =
   "The machine god dreams in the ruins of its own instructions.";
@@ -18,7 +20,7 @@ export const AUTOMATIC_TRACE_LIMIT = 12;
 export const AUTOMATIC_POPULATION_LIMIT = 85;
 
 export function createAutomaticState(seed, composer = LEGACY_COMPOSER) {
-  if (![LEGACY_COMPOSER, CONTINUITY_COMPOSER].includes(composer))
+  if (composer !== LEGACY_COMPOSER && !isContinuityComposer(composer))
     throw new Error("Unknown composer version.");
   if (!Number.isInteger(seed) || seed < 0 || seed > 4294967295)
     throw new Error("Choose a whole seed between 0 and 4294967295.");
@@ -29,9 +31,10 @@ export function createAutomaticState(seed, composer = LEGACY_COMPOSER) {
     root: AUTOMATIC_ORIGIN,
     novelty: 0.5,
     echo: 0.5,
-    ...(composer === CONTINUITY_COMPOSER
+    ...(isContinuityComposer(composer)
       ? { composer, motif: chooseMotif(AUTOMATIC_ORIGIN) }
       : {}),
+    ...(composer === MEMORY_COMPOSER ? { memory: [] } : {}),
   };
 }
 
@@ -85,6 +88,9 @@ export function advanceAutomaticState(state, entry) {
     seed: nextSeed(entry.champion.text, entry.settings.seed),
     novelty: entry.champion.novelty,
     echo: entry.champion.echo,
+    ...(state.composer === MEMORY_COMPOSER
+      ? { memory: cloneMemory(entry.champion.memory) }
+      : {}),
   };
 }
 
@@ -119,12 +125,15 @@ export async function runAutomatic({
       ...settings,
       aspects: [...aspects],
       cycle,
-      ...(current.composer === CONTINUITY_COMPOSER
+      ...(isContinuityComposer(current.composer)
         ? {
             composer: current.composer,
             motif: current.motif,
             corpusVersions: corpusVersions(engine),
           }
+        : {}),
+      ...(current.composer === MEMORY_COMPOSER
+        ? { memory: cloneMemory(current.memory) }
         : {}),
     };
     onPlan(plan, run);
@@ -148,16 +157,15 @@ export async function runAutomatic({
     current = advanceAutomaticState(current, entry);
     onEpoch(entry, nodes, current, rule);
     onPhase("read", run.depth);
-    const readingMs =
-      current.composer === CONTINUITY_COMPOSER
-        ? Math.max(
-            pauseMs,
-            Math.min(
-              pauseMs * 2.25,
-              entry.champion.text.split(/\s+/).length * 220,
-            ),
-          )
-        : pauseMs;
+    const readingMs = isContinuityComposer(current.composer)
+      ? Math.max(
+          pauseMs,
+          Math.min(
+            pauseMs * 2.25,
+            entry.champion.text.split(/\s+/).length * 220,
+          ),
+        )
+      : pauseMs;
     if (count < maxEpochs - 1) await wait(readingMs, signal);
   }
   return current;

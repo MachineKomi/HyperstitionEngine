@@ -8,10 +8,13 @@ import {
 import {
   CONTINUITY_COMPOSER,
   LEGACY_COMPOSER,
+  MEMORY_COMPOSER,
 } from "../src/engine/continuity.js";
-const composer = process.argv.includes("--continuity")
-  ? CONTINUITY_COMPOSER
-  : LEGACY_COMPOSER;
+const composer = process.argv.includes("--memory")
+  ? MEMORY_COMPOSER
+  : process.argv.includes("--continuity")
+    ? CONTINUITY_COMPOSER
+    : LEGACY_COMPOSER;
 const ids = ["N_Land", "Bible", "AI"];
 const catalog = JSON.parse(
   await readFile(

@@ -2,11 +2,13 @@ import { waitForPulse } from "./clock.js";
 import { windowSpan, sourceAddress } from "./sourceSpans.js";
 import {
   ContinuityComposer,
-  CONTINUITY_COMPOSER,
   LEGACY_COMPOSER,
   chooseMotif,
   corpusVersions,
+  MEMORY_COMPOSER,
+  isContinuityComposer,
 } from "./continuity.js";
+import { validateMemory } from "./memory.js";
 // Original procedural writing rules: source fragments are recombined, never LLM-generated.
 export function randomStream(seed) {
   let state = seed >>> 0;
@@ -116,9 +118,9 @@ export class SprawlEngine {
   }
 
   mutate(parent, rng, mutation, composer = LEGACY_COMPOSER) {
-    if (composer === CONTINUITY_COMPOSER) {
+    if (isContinuityComposer(composer)) {
       this.continuity ||= new ContinuityComposer(this.sources);
-      return this.continuity.mutate(parent, rng, mutation);
+      return this.continuity.mutate(parent, rng, mutation, composer);
     }
     const source = this.sources[Math.floor(rng() * this.sources.length)];
     const record = source.records[Math.floor(rng() * source.records.length)];
@@ -164,13 +166,14 @@ export async function growSprawl({
   mutation,
   composer = LEGACY_COMPOSER,
   motif,
+  memory = [],
   corpusVersions: versions,
   signal,
   onLayer = () => {},
   layerPauseMs = 100,
   wait = waitForPulse,
 }) {
-  if (![LEGACY_COMPOSER, CONTINUITY_COMPOSER].includes(composer))
+  if (composer !== LEGACY_COMPOSER && !isContinuityComposer(composer))
     throw new Error("Unknown composer version.");
   if (versions) {
     const actual = corpusVersions(engine);
@@ -192,7 +195,15 @@ export async function growSprawl({
   if (!Number.isFinite(mutation) || mutation < 0 || mutation > 1)
     throw new Error("Mutation must be between zero and one.");
   if (!root.trim()) throw new Error("Give the machine a seed phrase.");
-  if (composer === CONTINUITY_COMPOSER) await engine.prepareComposer(signal);
+  const lineageMemory =
+    composer === MEMORY_COMPOSER
+      ? validateMemory(
+          memory,
+          Object.keys(corpusVersions(engine)),
+          motif || chooseMotif(root),
+        )
+      : null;
+  if (isContinuityComposer(composer)) await engine.prepareComposer(signal);
   const rng = randomStream(seed);
   const nodes = [
     {
@@ -202,9 +213,10 @@ export async function growSprawl({
       text: normalizeRoot(root),
       operator: "ORIGIN",
       source: null,
-      ...(composer === CONTINUITY_COMPOSER
+      ...(isContinuityComposer(composer)
         ? { motif: motif || chooseMotif(root) }
         : {}),
+      ...(lineageMemory ? { memory: lineageMemory } : {}),
     },
   ];
   let frontier = [nodes[0]];

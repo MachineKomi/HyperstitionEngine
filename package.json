@@ -1,7 +1,7 @@
 {
   "name": "hyperstition-engine",
   "private": true,
-  "version": "0.16.0",
+  "version": "0.17.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,8 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "node --test",
-    "compare:composers": "node scripts/compare-composers.mjs"
+    "compare:composers": "node scripts/compare-composers.mjs",
+    "compare:memory": "node scripts/compare-memory.mjs"
   },
   "dependencies": {
     "markov-strings": "^3.0.1",

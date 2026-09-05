@@ -1,4 +1,4 @@
-# Hyperstition Engine — The Automatic Cathedral (v0.16)
+# Hyperstition Engine — The Automatic Cathedral (v0.17)
 
 A browser-local cyber-occult writing instrument. It starts exploring by itself: a random seed and five simple rules grow branching fiction, select an heir, and feed the result back into the next generation. A visible **AUTO / MANUAL** switch lets you take control at any moment. No LLM or remote inference is involved in generation.
 
@@ -15,6 +15,8 @@ The **CLOCK SPEED** dial spans **0.25×–32×**. At the default **1×**, the ci
 Select a graph node or choose **PIN TO READ** to hold a specimen while growth continues. **FOLLOW LIVE** returns to the moving lineage; CANONIZE preserves the inspected fragment with its original epoch and source trace. The map reserves node positions before growth, and reading panels hold their size as content changes. The chronicle initially mounts 12 fossils; **EXHUME 12 OLDER EPOCHS** reveals more without reducing export or retention. Automatic mode presents the archive directly; switch to Manual for replay and possession controls.
 
 ## Run
+
+**v0.17 / Ancestral memory:** Continuity II is the automatic default. Each branch remembers its last 12 source passages and authored endings, making room for fresh choices before letting old ones return. The memory inspector shows these impressions; selecting one pins its branch. Only the surviving branch's memory feeds the next epoch. Manual mode and archives retain Continuity I and the original word-splice composer. See [the rules, 900-epoch comparison and limits](docs/ANCESTRAL_MEMORY.md).
 
 **v0.16 / Continuity:** the automatic composer carries a recurring image through three passages: an inherited sentence, an intact source span and an authored transformation. An indexed lexical shortlist and seeded probability draw select the source. The gold spectrum shows the actual conditional probabilities, surprisal and entropy. Larger fixed reading windows and word-count-based pauses give the passage room. Manual mode exposes both the new composer and the preserved word-splice baseline; old chronicles recall their original composer. See [the comparison, mathematics and limitations](docs/CONTINUITY.md).
 

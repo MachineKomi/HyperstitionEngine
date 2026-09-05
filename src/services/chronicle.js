@@ -1,9 +1,11 @@
 import { normalizeSpan, sourceAddress } from "../engine/sourceSpans.js";
 import {
-  CONTINUITY_COMPOSER,
+  MEMORY_COMPOSER,
+  isContinuityComposer,
   LEGACY_COMPOSER,
   SHORTLIST_LIMIT,
 } from "../engine/continuity.js";
+import { MEMORY_LIMIT, validateMemory } from "../engine/memory.js";
 export const CHRONICLE_LIMIT = 108;
 export const CHRONICLE_FILE_LIMIT = 16 * 1024 * 1024;
 export const CHRONICLE_KEY = "hyperstition.chronicle.v1";
@@ -85,14 +87,14 @@ export function validateChronicle(data) {
     let composerSettings = {},
       compositionFields = {};
     if (s.composer !== undefined) {
-      if (![CONTINUITY_COMPOSER, LEGACY_COMPOSER].includes(s.composer))
+      if (s.composer !== LEGACY_COMPOSER && !isContinuityComposer(s.composer))
         throw new Error("Unsupported composer version in this chronicle.");
       composerSettings = { composer: s.composer };
       if (s.composer === LEGACY_COMPOSER && c.composition !== undefined)
         throw new Error(
           "Composition statistics do not belong to this replay version.",
         );
-      if (s.composer === CONTINUITY_COMPOSER) {
+      if (isContinuityComposer(s.composer)) {
         const m = c.composition;
         const versions = s.corpusVersions;
         if (
@@ -115,7 +117,7 @@ export function validateChronicle(data) {
           !c.text.includes(c.carry) ||
           !c.carry.includes(c.motif) ||
           !m ||
-          m.version !== CONTINUITY_COMPOSER ||
+          m.version !== s.composer ||
           !Number.isInteger(m.candidates) ||
           !number(m.candidates, 1, SHORTLIST_LIMIT) ||
           !Array.isArray(m.probabilities) ||
@@ -165,6 +167,30 @@ export function validateChronicle(data) {
             temperature: m.temperature,
           },
         };
+        if (s.composer === MEMORY_COMPOSER) {
+          const before = validateMemory(s.memory, s.aspects, s.motif);
+          const after = validateMemory(c.memory, s.aspects, s.motif);
+          const last = after.at(-1);
+          if (
+            after.length !== Math.min(MEMORY_LIMIT, before.length + s.depth) ||
+            last?.source !== c.source ||
+            last?.fragment !== c.sourceFragment ||
+            last?.carry !== c.carry ||
+            !Number.isInteger(m.memoryAvoided) ||
+            !number(m.memoryAvoided, 0, SHORTLIST_LIMIT - 1) ||
+            typeof m.memoryRevisit !== "boolean" ||
+            (m.memoryRevisit && m.memoryAvoided !== 0)
+          )
+            throw new Error(
+              "Invalid lineage memory transition in this chronicle.",
+            );
+          composerSettings.memory = before;
+          compositionFields.memory = after;
+          compositionFields.composition.memoryAvoided = m.memoryAvoided;
+          compositionFields.composition.memoryRevisit = m.memoryRevisit;
+        } else if (s.memory !== undefined || c.memory !== undefined) {
+          throw new Error("Lineage memory requires its own composer version.");
+        }
       }
     } else if (c.composition !== undefined)
       throw new Error("A composed fragment must name its replay version.");
